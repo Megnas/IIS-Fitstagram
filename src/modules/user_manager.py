@@ -1,5 +1,5 @@
 import string
-from db import *
+from .db import db, User
 from enum import Enum
 from hashlib import sha224
 
@@ -36,8 +36,9 @@ def change_role(mail: string, role: Roles):
     db.session.commit()
 
 
-def find_user(username: string) -> SQLAlchemy.Query:
-    return db.session.query(User).filter(User.username == username)
+def find_users(username: string):
+    users = db.session.query(User).filter(User.username.contains(username))
+    return users
 
 
 def delete_user(user_id: int):
