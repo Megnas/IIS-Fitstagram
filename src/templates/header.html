@@ -1,13 +1,7 @@
 
 <header class="site-header">
     <div class="header_container">
-        <a
-        {% if user.is_authenticated %}
-         href="{{ url_for('auth.home') }}"
-        {% else %}
-         href="/"
-        {% endif %}
-        >
+        <a href="{{ url_for('view.index') }}">
             <div class="site-image">
                 <div class="site-image-container">
                     <img src="/static/images/site_header_pic.png" alt="FITstagram">
@@ -22,7 +16,7 @@
         </div>
         <div class="header-login">
             {% if user.is_authenticated %}
-            <a href="/profile/{{ user.id }}">
+            <a href="{{ url_for('foto.get_user_image', user_id=1) }}">
                 <div class="user-info">
                     <div class="user-header-pfp">
                         <img src="{{ url_for('foto.get_user_image', user_id=user.id) }}" alt="user image">
