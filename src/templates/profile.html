@@ -1,0 +1,11 @@
+<!-- templates/profile.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<h1>{{ p_user.username }}</h1>
+<img src="{{ url_for('foto.get_user_image', user_id=p_user.id) }}" alt="user image">
+{% endblock %}
