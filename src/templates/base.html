@@ -12,13 +12,9 @@
 </head>
 
 <body>
-    <header>
-        <h1>My Website</h1>
-        <nav>
-            <a href="/">Index</a>
-            <a href="{{ url_for('auth.home') }}">Home</a>
-        </nav>
-    </header>
+{% block header %}
+    {% include "header.html" %}
+{% endblock %}
 
     <main>
         {% block content %}

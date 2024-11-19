@@ -1,0 +1,42 @@
+
+<header class="site-header">
+    <div class="header_container">
+        <a
+        {% if user.is_authenticated %}
+         href="{{ url_for('auth.home') }}"
+        {% else %}
+         href="/"
+        {% endif %}
+        >
+            <div class="site-image">
+                <div class="site-image-container">
+                    <img src="/static/images/site_header_pic.png" alt="FITstagram">
+                </div>
+            </div>
+        </a>
+        {% if user.is_authenticated %}
+        <a href="/profile/{{ user.id }}">
+            <div class="user-info">
+                <div class="user-header-pfp">
+                    <img src="{{ url_for('foto.get_user_image', user_id=user.id) }}" alt="user image">
+                </div>
+                <span>user.name</span>
+            </div>
+        </a>
+        {%endif%}
+        <div class="search-bar">
+            <form action="/search" method="get">
+                <input type="text" name="query" placeholder="Search..." aria-label="Search">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div class="header-login">
+            {% if user.is_authenticated %}
+                <a href="/logout" class="header-login-btn">Log out</a>
+            {% else %}
+                <a href="/register" class="header-login-btn">Register</a>
+                <a href="/login" class="header-login-btn">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</header>

@@ -1,8 +1,10 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from flask_login import current_user
 from dotenv import load_dotenv
 import os
 from modules.db import db
 from modules.auth import init_login_manager
+import modules.photo_manager as pm
 
 app = Flask(__name__)
 
@@ -29,7 +31,7 @@ app.register_blueprint(foto_template.bp)
 
 @app.route("/")
 def main():
-    return render_template("index.html")
+    return render_template("index.html",user=current_user)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
