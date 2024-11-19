@@ -15,13 +15,20 @@ class Roles(Enum):
     USER = 2
     VISITOR = 1
 
+class Photo(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(db.String(128))
+    data: Mapped[str] = mapped_column(db.LargeBinary)
+    mimetype: Mapped[str] = mapped_column(db.String(128))
+
+
 class User(db.Model, UserMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(db.String(128), unique=True)
     username: Mapped[str] = mapped_column(db.String(128))
     password_hash: Mapped[str] = mapped_column(db.String(60))
     role: Mapped[int] = mapped_column(db.Enum(Roles))
-    avatar_path: Mapped[str] = mapped_column(db.String(128))
+    photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id))
     blocked: Mapped[bool] = mapped_column(db.Boolean)
 
 class Group(db.Model):
@@ -29,13 +36,13 @@ class Group(db.Model):
     name: Mapped[str] = mapped_column(db.String(128))
     owner_id: Mapped[int] = mapped_column(ForeignKey(User.id))
     description: Mapped[str] = mapped_column(db.String(256))
-    avatar_path: Mapped[str] = mapped_column(db.String(128))
+    photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id))
 
 class Post(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[str] = mapped_column(db.String(256))
     post_date: Mapped[str] = mapped_column(db.DateTime)
-    file_path: Mapped[str] = mapped_column(db.String(256))
+    photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id))
     visibility: Mapped[bool] = mapped_column(db.Boolean)
 
 class Tag(db.Model):
@@ -72,3 +79,4 @@ class Comment(db.Model):
     post_id: Mapped[int] = mapped_column(ForeignKey(Post.id))
     user_id: Mapped[int] = mapped_column(ForeignKey(User.id))
     content: Mapped[str] = mapped_column(db.String(256))
+    timestamp: Mapped[str] = mapped_column(db.DateTime)
