@@ -28,7 +28,7 @@ def login():
         if user:
             login_user(user)
             flash('Logged in successfully!', 'success')
-            return redirect(url_for('auth.home'))
+            return redirect(url_for('view.index'))
         flash('Invalid credentials, please try again.', 'danger')
     return render_template('login.html')
 
@@ -37,9 +37,4 @@ def login():
 def logout():
     logout_user()
     flash('You have been logged out.', 'info')
-    return redirect(url_for('auth.login'))
-
-@bp.route('/home')
-@login_required
-def home():
-    return render_template('home.html', username=current_user.username)
+    return redirect(url_for('view.index'))

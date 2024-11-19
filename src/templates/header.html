@@ -16,7 +16,7 @@
         </div>
         <div class="header-login">
             {% if user.is_authenticated %}
-            <a href="{{ url_for('foto.get_user_image', user_id=1) }}">
+            <a href="{{ url_for('view.profile', user_id=user.id) }}">
                 <div class="user-info">
                     <div class="user-header-pfp">
                         <img src="{{ url_for('foto.get_user_image', user_id=user.id) }}" alt="user image">
@@ -24,6 +24,7 @@
                     <span> {{ user.username }}</span>
                 </div>
             </a>
+            <a href="/settings">Settings</a>
             {%endif%}
             <div class="login-btns">
                 {% if user.is_authenticated %}
