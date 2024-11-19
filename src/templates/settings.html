@@ -1,0 +1,57 @@
+<!-- templates/settings.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Settings
+{% endblock %}
+
+{% block content %}
+<h1>Update Your Profile</h1>
+
+    <!-- Display Profile Picture -->
+    <div>
+        <img src="{{ url_for('foto.get_user_image', user_id=user.id) }}" 
+             alt="Profile Picture" 
+             style="width: 150px; height: 150px; border-radius: 50%;">
+    </div>
+
+    <!-- Flash message for success or errors -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Profile Form -->
+    <form method="POST" action="{{ url_for('settings.settings') }}" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <div>
+            <label for="username">Username</label>
+            {{ form.username(class="form-control") }}
+        </div>
+        
+        <div>
+            <label for="email">Email</label>
+            {{ form.email(class="form-control") }}
+        </div>
+        
+        <div>
+            <label for="password">New Password (optional)</label>
+            {{ form.password(class="form-control") }}
+        </div>
+        
+        <div>
+            <label for="profile_picture">Profile Picture</label>
+            {{ form.profile_picture(class="form-control") }}
+        </div>
+        
+        <div>
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+{% endblock %}

@@ -2,10 +2,25 @@ import string
 from .db import db, User, Roles
 from hashlib import sha224
 
+from .photo_manager import upload_image
+
 def create_user(username: string, pwd: string, mail: string):
     hashed_pwd = sha224(pwd.encode('utf-8')).hexdigest()
     new_user = User(username=username, email=mail, password_hash=hashed_pwd, role=Roles.USER, blocked=False, photo_id=None)
     db.session.add(new_user)
+    db.session.commit()
+
+def update_user(user: User, username=None , email=None, pwd=None, pfp=None):
+    if pfp:
+        image_id = upload_image(pfp)
+        user.photo_id = image_id
+    if username:
+        user.username = username
+    if email:
+        user.email = email
+    if pwd:
+        user.password_hash = sha224(pwd.encode('utf-8')).hexdigest()
+
     db.session.commit()
 
 
@@ -40,6 +55,11 @@ def change_username(user_id: int, user_newname):
     user.username = user_newname
     db.session.commit()
 
+def change_image(user_id: int, image):
+    photo_id = upload_image(image)
+    user = db.session.query(User).filter(User.id == user_id).first()
+    user.photo_id = photo_id
+    db.session.commit()
 
 def get_username(user_id: int) -> string:
     user = db.session.query(User).filter(User.id == user_id).first()

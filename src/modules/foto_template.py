@@ -11,7 +11,7 @@ def get_user_image(user_id):
     user = get_user(user_id)
     if(user):
         if(user.photo_id):
-            image = get_pic_by_id()
+            image = get_pic_by_id(user.photo_id)
             if(image):
                 #Return image
                 return send_file(

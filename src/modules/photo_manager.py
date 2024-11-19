@@ -10,13 +10,14 @@ def render_picture(data):
     render_pic = base64.b64encode(data).decode('ascii')
     return render_pic
 
-def upload_image(file):
+def upload_image(file) -> int:
     data = file.read()
     name = secure_filename(file.filename)
     mimetype = file.mimetype
     new_photo = Photo(name=name, data=data,mimetype=mimetype)
     db.session.add(new_photo)
     db.session.commit()
+    return new_photo.id
 
 def get_pic_by_id(id: int):
     img = Photo.query.filter_by(id=id).first()
