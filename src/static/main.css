@@ -3,6 +3,15 @@ body{
     padding: 0;
 }
 
+
+
+body {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
 .header_container {
     display: flex;
     justify-content: space-between;
@@ -14,7 +23,21 @@ body{
 
 .user-info{
     font-size: 1rem;
+    display: flex;
+    align-items: flex-end;
+    padding-top: 5px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    transition: 0.2s;
 }
+
+.user-info:hover{
+    background-color: #0db5ec;
+    transition: 0.2s;
+}
+
+
 
 .search-bar form{
     display: flex;
@@ -58,5 +81,12 @@ body{
 
 .user-header-pfp img{
     height: 2.5rem;
-    margin-auto: auto;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info span {
+    margin-left: 10px; /* Add some space between the image and the text */
+    margin-top:auto;
+    margin-bottom: auto;
 }
