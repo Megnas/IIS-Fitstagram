@@ -24,7 +24,7 @@
                     <span> {{ user.username }}</span>
                 </div>
             </a>
-            <a href="/settings">Settings</a>
+            <a href="url_for('view.profile')">Settings</a>
             {%endif%}
             <div class="login-btns">
                 {% if user.is_authenticated %}
