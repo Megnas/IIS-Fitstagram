@@ -17,9 +17,9 @@ class Roles(Enum):
 
 class Photo(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(db.String(128))
-    data: Mapped[str] = mapped_column(db.LargeBinary)
-    mimetype: Mapped[str] = mapped_column(db.String(128))
+    name: Mapped[str] = mapped_column(db.String(128), nullable=False)  # File name
+    data: Mapped[bytes] = mapped_column(db.LargeBinary(length=(2**31 - 1)), nullable=False)  # Binary data
+    mimetype: Mapped[str] = mapped_column(db.String(128), nullable=False)  # MIME type (e.g., image/jpeg)
 
 
 class User(db.Model, UserMixin):
