@@ -20,7 +20,7 @@
                 <div class="user-header-pfp">
                     <img src="{{ url_for('foto.get_user_image', user_id=user.id) }}" alt="user image">
                 </div>
-                <span>user.name</span>
+                <span> {{ user.username }}</span>
             </div>
         </a>
         {%endif%}
@@ -32,10 +32,10 @@
         </div>
         <div class="header-login">
             {% if user.is_authenticated %}
-                <a href="/logout" class="header-login-btn">Log out</a>
+                <a href="{{ url_for('auth.logout') }}" class="header-login-btn">Log out</a>
             {% else %}
-                <a href="/register" class="header-login-btn">Register</a>
-                <a href="/login" class="header-login-btn">Login</a>
+                <a href="{{ url_for('auth.register') }}" class="header-login-btn">Register</a>
+                <a href="{{ url_for('auth.login') }}" class="header-login-btn">Login</a>
             {% endif %}
         </div>
     </div>
