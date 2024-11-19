@@ -19,5 +19,5 @@ def upload_image(file):
     db.session.commit()
 
 def get_pic_by_id(id: int):
-    img = Photo.query.filter_by(id=id).first() # TODO placeholder image
+    img = Photo.query.filter_by(id=id).first()
     return img

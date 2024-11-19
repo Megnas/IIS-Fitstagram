@@ -1,18 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- templates/index.html -->
+{% extends "base.html" %}
 
-<head>
-    <link rel="stylesheet" href="/static/main.css">
-    <meta charset="UTF-8">
-    <meta name="keywords" content="Foto, IIS, Despair">
-    <meta name="description" content="IIS Project">
-    <meta name="author" content="Dominik, František, Marek">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Fitstagram </title>
-</head>
+{% block title %}
+Home Page
+{% endblock %}
 
-<body>
-    <h1>Hello world</h1>
-</body>
-
-</html>
+{% block content %}
+<h2>Welcome to the Homepage</h2>
+<p>This is the main content area of the homepage.</p>
+{% endblock %}

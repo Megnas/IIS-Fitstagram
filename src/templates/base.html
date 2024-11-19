@@ -1,0 +1,34 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/static/main.css">
+    <meta charset="UTF-8">
+    <meta name="keywords" content="Foto, IIS, Despair">
+    <meta name="description" content="IIS Project">
+    <meta name="author" content="Dominik, František, Marek">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Fitstagram {% block title %}Default Title{% endblock %}</title>
+</head>
+
+<body>
+    <header>
+        <h1>My Website</h1>
+        <nav>
+            <a href="/">Index</a>
+            <a href="{{ url_for('auth.home') }}">Home</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <p>Default content goes here.</p>
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 My Website</p>
+    </footer>
+</body>
+
+</html>

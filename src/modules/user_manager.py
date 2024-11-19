@@ -4,7 +4,7 @@ from hashlib import sha224
 
 def create_user(username: string, pwd: string, mail: string):
     hashed_pwd = sha224(pwd.encode('utf-8')).hexdigest()
-    new_user = User(username=username, email=mail, password_hash=hashed_pwd, role=Roles.USER, blocked=False, avatar_path="")
+    new_user = User(username=username, email=mail, password_hash=hashed_pwd, role=Roles.USER, blocked=False, photo_id=None)
     db.session.add(new_user)
     db.session.commit()
 
@@ -45,6 +45,9 @@ def get_username(user_id: int) -> string:
     user = db.session.query(User).filter(User.id == user_id).first()
     return user.username
 
+def get_user(user_id: int) -> User:
+    user = db.session.query(User).filter(User.id == user_id).first()
+    return user
 
 def update_pfp(user_id: int, filename: string):
     user = db.session.query(User).filter(User.id == user_id).first()

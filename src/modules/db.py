@@ -28,7 +28,7 @@ class User(db.Model, UserMixin):
     username: Mapped[str] = mapped_column(db.String(128))
     password_hash: Mapped[str] = mapped_column(db.String(60))
     role: Mapped[int] = mapped_column(db.Enum(Roles))
-    photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id))
+    photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id), nullable=True)
     blocked: Mapped[bool] = mapped_column(db.Boolean)
 
 class Group(db.Model):
