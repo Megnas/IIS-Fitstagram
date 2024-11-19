@@ -19,6 +19,23 @@ app.config["SQLALCHEMY_DATABASE_URI"] = db_path if db_path else "sqlite:///proje
 #TODO: Load secret key from .env
 app.config['SECRET_KEY'] = 'not a secret'
 
+@app.cli.command("purge-db")
+def purge_db():
+    """
+    Purges all data from the database.
+    WARNING: This action is irreversible.
+    """
+    try:
+        # Drop all tables
+        db.drop_all()
+
+        # Recreate tables
+        db.create_all()
+
+        print("Database purged successfully!")
+    except Exception as e:
+        print(f"Error while purging the database: {e}")
+
 with  app.app_context():
     db.init_app(app)
     #db.drop_all()
