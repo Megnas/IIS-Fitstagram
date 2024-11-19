@@ -14,16 +14,6 @@
                 </div>
             </div>
         </a>
-        {% if user.is_authenticated %}
-        <a href="/profile/{{ user.id }}">
-            <div class="user-info">
-                <div class="user-header-pfp">
-                    <img src="{{ url_for('foto.get_user_image', user_id=user.id) }}" alt="user image">
-                </div>
-                <span> {{ user.username }}</span>
-            </div>
-        </a>
-        {%endif%}
         <div class="search-bar">
             <form action="/search" method="get">
                 <input type="text" name="query" placeholder="Search..." aria-label="Search">
@@ -32,11 +22,23 @@
         </div>
         <div class="header-login">
             {% if user.is_authenticated %}
-                <a href="{{ url_for('auth.logout') }}" class="header-login-btn">Log out</a>
-            {% else %}
-                <a href="{{ url_for('auth.register') }}" class="header-login-btn">Register</a>
-                <a href="{{ url_for('auth.login') }}" class="header-login-btn">Login</a>
-            {% endif %}
+            <a href="/profile/{{ user.id }}">
+                <div class="user-info">
+                    <div class="user-header-pfp">
+                        <img src="{{ url_for('foto.get_user_image', user_id=user.id) }}" alt="user image">
+                    </div>
+                    <span> {{ user.username }}</span>
+                </div>
+            </a>
+            {%endif%}
+            <div class="login-btns">
+                {% if user.is_authenticated %}
+                    <a href="{{ url_for('auth.logout') }}" class="header-login-btn">Log out</a>
+                {% else %}
+                    <a href="{{ url_for('auth.register') }}" class="header-login-btn">Register</a>
+                    <a href="{{ url_for('auth.login') }}" class="header-login-btn">Login</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </header>
