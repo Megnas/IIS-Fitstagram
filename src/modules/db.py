@@ -1,18 +1,26 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import ForeignKey, Column
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from flask_login import UserMixin
+from enum import Enum
 
 class Base(DeclarativeBase):
     pass
 
 db = SQLAlchemy(model_class=Base)
 
-class User(db.Model):
+class Roles(Enum):
+    ADMIN = 4
+    MODERATOR = 3
+    USER = 2
+    VISITOR = 1
+
+class User(db.Model, UserMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(db.String(128), unique=True)
     username: Mapped[str] = mapped_column(db.String(128))
     password_hash: Mapped[str] = mapped_column(db.String(60))
-    role: Mapped[int] = mapped_column(db.Integer)
+    role: Mapped[int] = mapped_column(db.Enum(Roles))
     avatar_path: Mapped[str] = mapped_column(db.String(128))
     blocked: Mapped[bool] = mapped_column(db.Boolean)
 

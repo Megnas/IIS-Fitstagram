@@ -1,29 +1,18 @@
 import string
-from .db import db, User
-from enum import Enum
+from .db import db, User, Roles
 from hashlib import sha224
-
-
-class Roles(Enum):
-    ADMIN = 4
-    MODERATOR = 3
-    USER = 2
-    VISITOR = 1
-
 
 def create_user(username: string, pwd: string, mail: string):
     hashed_pwd = sha224(pwd.encode('utf-8')).hexdigest()
-    new_user = User(username=username, email=mail, password_hash=hashed_pwd, role=Roles.USER, blocked=False)
+    new_user = User(username=username, email=mail, password_hash=hashed_pwd, role=Roles.USER, blocked=False, avatar_path="")
     db.session.add(new_user)
-    db.commit()
+    db.session.commit()
 
 
-def login_user(mail: string, pwd: string) -> int:
+def login_user(mail: string, pwd: string) -> User:
     hashed_pwd = sha224(pwd.encode('utf-8')).hexdigest()
     user = db.session.query(User).filter(User.email == mail, User.password_hash == hashed_pwd, User.blocked == False).first()
-    if user.count() == 0:
-        return False
-    return user.id
+    return user
 
 
 def block_user(mail: string):
