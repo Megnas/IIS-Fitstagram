@@ -31,7 +31,11 @@ app.register_blueprint(foto_template.bp)
 
 @app.route("/")
 def main():
-    return render_template("index.html",user=current_user)
+    return render_template("index.html")
+
+@app.context_processor
+def inject_user():
+    return {'user': current_user}
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
