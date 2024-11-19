@@ -14,8 +14,8 @@ from .user_manager import update_user
 bp = Blueprint('settings', __name__)
 
 class SettingsForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=120)])
-    email = StringField('Email', validators=[DataRequired(), Email(), Length(min=5, max=120)])
+    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=32)])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(min=5, max=128)])
     password = PasswordField('New Password')
     profile_picture = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     submit = SubmitField('Save Changes')

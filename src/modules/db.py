@@ -33,7 +33,7 @@ class User(db.Model, UserMixin):
 
 class Group(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(db.String(128))
+    name: Mapped[str] = mapped_column(db.String(64))
     owner_id: Mapped[int] = mapped_column(ForeignKey(User.id))
     description: Mapped[str] = mapped_column(db.String(256))
     photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id))
@@ -47,7 +47,7 @@ class Post(db.Model):
 
 class Tag(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(db.String(128))
+    name: Mapped[str] = mapped_column(db.String(32))
     blocked: Mapped[bool] = mapped_column(db.Boolean)
 
 class PostTag(db.Model):
