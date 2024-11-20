@@ -1,7 +1,7 @@
 
 <header class="site-header">
-    <div class="header_container">
-        <a href="{{ url_for('view.index') }}">
+    <div class="header-container">
+        <a href="{{ url_for('view.index') }}" class="site-image-container">
             <div class="site-image">
                 <div class="site-image-container">
                     <img src="/static/images/site_header_pic.png" alt="FITstagram">
@@ -14,9 +14,13 @@
                 <button type="submit">Search</button>
             </form>
         </div>
+
+
         <div class="header-login">
+
+
             {% if user.is_authenticated %}
-            <a href="{{ url_for('view.profile', user_id=user.id) }}">
+            <a href="{{ url_for('view.profile', user_id=user.id) }}" class="header-login-btn" id="user-info">
                 <div class="user-info">
                     <div class="user-header-pfp">
                         <img src="{{ url_for('foto.get_user_image', user_id=user.id) }}" alt="user image">
@@ -24,16 +28,25 @@
                     <span> {{ user.username }}</span>
                 </div>
             </a>
-            <a href="{{ url_for('settings.settings') }} ">Settings</a>
+            <a href="{{ url_for('settings.settings') }} " class="header-login-btn" >
+                Settings
+            </a>
             {%endif%}
-            <div class="login-btns">
-                {% if user.is_authenticated %}
-                    <a href="{{ url_for('auth.logout') }}" class="header-login-btn">Log out</a>
-                {% else %}
-                    <a href="{{ url_for('auth.register') }}" class="header-login-btn">Register</a>
-                    <a href="{{ url_for('auth.login') }}" class="header-login-btn">Login</a>
-                {% endif %}
-            </div>
+
+            {% if user.is_authenticated %}
+            <a href="{{ url_for('auth.logout') }}" class="header-login-btn">
+                    Log out
+            </a>
+            {% else %}
+            <a href="{{ url_for('auth.register') }}" class="header-login-btn">
+                    Register
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="header-login-btn">
+                    Log in
+            </a>
+            {% endif %}
+
+
         </div>
     </div>
 </header>

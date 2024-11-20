@@ -1,8 +1,13 @@
+/* Global */
 body{
     margin: 0;
     padding: 0;
 }
 
+a {
+    text-decoration: none;
+    color: inherit;
+}
 
 
 body {
@@ -12,75 +17,102 @@ body {
   font-style: normal;
 }
 
-.header_container {
+
+/* HEADER - DO NOT TOUCH OR EVERYTHING WILL BREAK */
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 5px 4em 5px 1em;
     background-color: #f4f4f4;
     border-bottom: 1px solid #ddd;
+    height: 4em;
 }
 
 .user-info{
     font-size: 1rem;
     display: flex;
+    align-content: flex-start;
     align-items: flex-end;
-    padding-top: 5px;
-    padding-bottom: 3px;
-    padding-left: 10px;
-    padding-right: 10px;
     transition: 0.2s;
-}
-
-.user-info:hover{
-    background-color: #0db5ec;
-    transition: 0.2s;
+    height: 100%;
 }
 
 
+.search-bar{
+    width: 30%;
+    height: 60%;
+}
 
 .search-bar form{
     display: flex;
+    height: 100%;
+    width: 100%;
 }
 
 .search-bar input{
-    padding: 5px;
-    margin: 5px;
     font-size: 1rem;
+    padding: 0 0.5em 0 0.5em;
+    height: 100%;
+    border: none;
+    width: 80%;
 }
 .search-bar button{
     text-decoration: none;
     font-size: 1rem;
     cursor: pointer;
+    height: 100%;
+    width: 5em;
+    border: none;
+    border-radius: 0;
 }
 
-.btn{
-    text-decoration: none;
-    padding: 5px 10px;
-    background-color: #007bff;
-    color:white;
-    border-radius: 3px;
-    font-size: 1rem;
-}
-.btn:hover{
-    background-color: #0056b3;
-}
 
 .site-image img{
-    height: 3.5rem;
+    margin: auto;
+    height: 3.5em;
 }
 
 .header-login{
+    height: 100%;
+    min-width: 20em;
     display: flex;
+    justify-content: right;
     align-items: center;
-    justify-content: space-between;
-    flex-direction: row;
-    width: 20%;
+}
 
+
+.header-login-btn{
+    border-radius: 0.6em;
+    height: 2.5em;
+    padding: 0 0.7em;
+    transition: 0.2s;
+    align-content: center;
+    background-color: transparent;
+    margin-left: 1em;
+}
+
+
+#user-info{
+    background-color: #0db5ec;
+}
+
+#user-info:hover{
+    background-color: #02a4dc;
+}
+
+.header-login-btn:hover{
+    background-color: #0db5ec;
+    transition: 0.2s;
+}
+
+.login-btn-container {
+    height: 100%;
+    padding: 0.4em;
 }
 
 .user-header-pfp img{
-    height: 2.5rem;
+    height: 2em;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -90,3 +122,5 @@ body {
     margin-top:auto;
     margin-bottom: auto;
 }
+
+/* Content */
