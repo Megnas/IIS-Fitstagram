@@ -7,10 +7,33 @@ Login
 
 {% block content %}
 <h1>Login</h1>
-    <form method="POST">
-        <input type="email" name="email" placeholder="E-Mail" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
+    <!-- Flash message for success or errors -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    <ul>
+        {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endwith %}
+
+<!-- Profile Form -->
+<form method="POST" action="{{ url_for('auth.login') }}" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    
+    <div>
+        <label for="email">Email</label>
+        {{ form.email(class="form-control") }}
+    </div>
+    
+    <div>
+        <label for="password">Password</label>
+        {{ form.password(class="form-control") }}
+    </div>
+    
+    <div>
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
 {% endblock %}
