@@ -1,0 +1,23 @@
+<!-- templates/groups.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Groups
+{% endblock %}
+
+{% block content %}
+<h1> Groups </h1>
+<ul>
+{% for group in groups %}
+<li>
+    <h3>{{ group.name }}</h3>
+    <p>{{ group.description}}</p>
+    <img src = "{{ url_for('foto.get_group_image', group_id=group.id) }}"
+        alt="Group Image"
+        style="width: 150px; height: 150px; border-radius: 50%;">
+    >
+    
+</li>
+{% endfor %}
+</ul>
+{% endblock %}

@@ -30,6 +30,8 @@ class User(db.Model, UserMixin):
     role: Mapped[int] = mapped_column(db.Enum(Roles))
     photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id), nullable=True)
     blocked: Mapped[bool] = mapped_column(db.Boolean)
+    groups: db.relationship("Group", secondary=user_group, backref="user")
+    invited_groups: db.relationship("Group", secondary=user_group_invite, backref="user")
 
 class Group(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -37,6 +39,16 @@ class Group(db.Model):
     owner_id: Mapped[int] = mapped_column(ForeignKey(User.id))
     description: Mapped[str] = mapped_column(db.String(256))
     photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id))
+    users: db.relationship("User", secondary=user_group, backref="group")
+    invited_users: db.relationship("User", secondary=user_group_invite, backref="group")
+    
+user_group = db.Table("user_group",
+    db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id", primary_key=True)))
+
+user_group_invite = db.Table("user_group_invite",
+    db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id", primary_key=True)))
 
 class Post(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
