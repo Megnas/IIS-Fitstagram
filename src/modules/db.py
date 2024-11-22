@@ -21,6 +21,13 @@ class Photo(db.Model):
     data: Mapped[bytes] = mapped_column(db.LargeBinary(length=(2**31 - 1)), nullable=False)  # Binary data
     mimetype: Mapped[str] = mapped_column(db.String(128), nullable=False)  # MIME type (e.g., image/jpeg)
 
+user_group = db.Table("user_group",
+    db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id", primary_key=True)))
+
+user_group_invite = db.Table("user_group_invite",
+    db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id", primary_key=True)))
 
 class User(db.Model, UserMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -30,8 +37,8 @@ class User(db.Model, UserMixin):
     role: Mapped[int] = mapped_column(db.Enum(Roles))
     photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id), nullable=True)
     blocked: Mapped[bool] = mapped_column(db.Boolean)
-    groups: db.relationship("Group", secondary=user_group, backref="user")
-    invited_groups: db.relationship("Group", secondary=user_group_invite, backref="user")
+    groups = db.relationship("Group", secondary=user_group, backref="user")
+    invited_groups = db.relationship("Group", secondary=user_group_invite, backref="user")
 
 class Group(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -39,16 +46,8 @@ class Group(db.Model):
     owner_id: Mapped[int] = mapped_column(ForeignKey(User.id))
     description: Mapped[str] = mapped_column(db.String(256))
     photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id))
-    users: db.relationship("User", secondary=user_group, backref="group")
-    invited_users: db.relationship("User", secondary=user_group_invite, backref="group")
-    
-user_group = db.Table("user_group",
-    db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id", primary_key=True)))
-
-user_group_invite = db.Table("user_group_invite",
-    db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id", primary_key=True)))
+    users = db.relationship("User", secondary=user_group, backref="group")
+    invited_users = db.relationship("User", secondary=user_group_invite, backref="group")
 
 class Post(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -68,10 +67,6 @@ class PostTag(db.Model):
 
 class PostGroup(db.Model):
     post_id: Mapped[int] = mapped_column(ForeignKey(Post.id),primary_key=True,)
-    group_id: Mapped[int] = mapped_column(ForeignKey(Group.id),primary_key=True,)
-
-class UserGroup(db.Model):
-    user_id: Mapped[int] = mapped_column(ForeignKey(User.id),primary_key=True,)
     group_id: Mapped[int] = mapped_column(ForeignKey(Group.id),primary_key=True,)
 
 class GroupInvite(db.Model):
