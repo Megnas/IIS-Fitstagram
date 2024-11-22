@@ -4,9 +4,9 @@ from hashlib import sha224
 
 from .photo_manager import upload_image
 
-def create_user(username: string, pwd: string, mail: string):
+def create_user(username: str, pwd: str, mail: str, uid: str):
     hashed_pwd = sha224(pwd.encode('utf-8')).hexdigest()
-    new_user = User(username=username, email=mail, password_hash=hashed_pwd, role=Roles.USER, blocked=False, photo_id=None)
+    new_user = User(username=username, email=mail, password_hash=hashed_pwd, role=Roles.USER, blocked=False, photo_id=None, unique_id=uid)
     db.session.add(new_user)
     db.session.commit()
 
