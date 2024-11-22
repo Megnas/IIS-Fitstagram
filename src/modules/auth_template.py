@@ -16,7 +16,7 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email(), Length(min=5, max=128)])
     password = PasswordField('New Password')
-    submit = SubmitField('Register')
+    submit = SubmitField('Login')
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
