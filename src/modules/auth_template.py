@@ -9,6 +9,7 @@ bp = Blueprint('auth', __name__)
 
 class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email(), Length(min=5, max=128)])
+    unique_id = StringField('UID', validators=[DataRequired(), Length(min=5, max=128)])
     username = StringField('Username', validators=[DataRequired(), Length(min=3, max=32)])
     password = PasswordField('New Password')
     submit = SubmitField('Register')
@@ -24,12 +25,15 @@ def register():
 
     if form.validate_on_submit():
         try:
-            user_manager.create_user(username=form.username.data, pwd=form.password.data, mail=form.email.data)
+            user_manager.create_user(username=form.username.data, pwd=form.password.data, mail=form.email.data, uid=form.unique_id.data)
             flash('Registration successful! You can now log in.', 'success')
             return redirect(url_for('auth.login'))
         except Exception as e:
             flash('Registration Failed.', 'danger')
             print("Registration failed!", e)
+    else:
+        # If form data is not valid, flash a message and render the form again
+        flash('The provided data is not valid. Please check your inputs.', 'warning')
     return render_template('register.html', form=form)
 
 @bp.route('/login', methods=['GET', 'POST'])

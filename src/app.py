@@ -28,6 +28,9 @@ def purge_db():
         for table in reversed(meta.sorted_tables):
             db.session.execute(table.delete())
         db.session.commit()
+    db.metadata.clear()
+    db.drop_all()
+    db.session.commit()
     click.echo("All tables have been purged.")
 
 with  app.app_context():
