@@ -25,49 +25,55 @@ user_group = db.Table("user_group",
     db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
     db.Column("user_id", db.Integer, db.ForeignKey("user.id", primary_key=True)))
 
-user_group_invite = db.Table("user_group_invite",
-    db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
+user_post = db.Table("user_post",
+    db.Column("post_id", db.Integer, db.ForeignKey("post.id"), primary_key=True),
     db.Column("user_id", db.Integer, db.ForeignKey("user.id", primary_key=True)))
 
 class User(db.Model, UserMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
-    email: Mapped[str] = mapped_column(db.String(128), unique=True)
-    username: Mapped[str] = mapped_column(db.String(128))
+    email: Mapped[str] = mapped_column(db.String(128), unique=True, nullable=False, index=True)
+    username: Mapped[str] = mapped_column(db.String(128), nullable=False)
+    unique_id: Mapped[str] = mapped_column(db.String(128), nullable=False, unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(db.String(60))
-    role: Mapped[int] = mapped_column(db.Enum(Roles))
+    role: Mapped[int] = mapped_column(db.Enum(Roles), nullable=False)
     photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id), nullable=True)
-    blocked: Mapped[bool] = mapped_column(db.Boolean)
+    blocked: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
     groups = db.relationship("Group", secondary=user_group, back_populates="users")
-    invited_groups = db.relationship("Group", secondary=user_group_invite, back_populates="invited_users")
+    posts = db.relationship("Post", secondary=user_post, back_populates="users")
+
+group_post = db.Table("group_post",
+    db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
+    db.Column("post_id", db.Integer, db.ForeignKey("post.id", primary_key=True)))
 
 class Group(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(db.String(64))
+    name: Mapped[str] = mapped_column(db.String(64), nullable=False)
     owner_id: Mapped[int] = mapped_column(ForeignKey(User.id))
-    description: Mapped[str] = mapped_column(db.String(256))
-    photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id))
+    description: Mapped[str] = mapped_column(db.String(256), nullable=False)
+    photo_id: Mapped[int] = mapped_column(ForeignKey(Photo.id))
+    visibility: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
     users = db.relationship("User", secondary=user_group, back_populates="groups")
-    invited_users = db.relationship("User", secondary=user_group_invite, back_populates="invited_groups")
+    posts = db.relationship("Post", secondary=group_post, back_populates="groups")
+    
+post_tag = db.Table("post_tag",
+    db.Column("post_id", db.Integer, db.ForeignKey("post.id"), primary_key=True),
+    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id", primary_key=True)))
 
 class Post(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[str] = mapped_column(db.String(256))
-    post_date: Mapped[str] = mapped_column(db.DateTime)
+    post_date: Mapped[str] = mapped_column(db.DateTime, nullable=False)
     photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id))
-    visibility: Mapped[bool] = mapped_column(db.Boolean)
+    visibility: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
+    tags = db.relationship("Tag", secondary=post_tag, back_populates="posts")
+    groups = db.relationship("Group", secondary=group_post, back_populates="posts")
+    users = db.relationship("User", secondary=user_post, back_populates="posts")
 
 class Tag(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(db.String(32))
-    blocked: Mapped[bool] = mapped_column(db.Boolean)
-
-class PostTag(db.Model):
-    post_id: Mapped[int] = mapped_column(ForeignKey(Post.id),primary_key=True,)
-    tag_id: Mapped[int] = mapped_column(ForeignKey(Tag.id),primary_key=True,)
-
-class PostGroup(db.Model):
-    post_id: Mapped[int] = mapped_column(ForeignKey(Post.id),primary_key=True,)
-    group_id: Mapped[int] = mapped_column(ForeignKey(Group.id),primary_key=True,)
+    name: Mapped[str] = mapped_column(db.String(64), nullable=False, unique=True, index=True)
+    blocked: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
+    posts = db.relationship("Post", secondary=post_tag, back_populates="tags")
 
 class GroupInvite(db.Model):
     user_id: Mapped[int] = mapped_column(ForeignKey(User.id), primary_key=True, )
@@ -79,11 +85,11 @@ class GroupInvite(db.Model):
 class Score(db.Model):
     post_id: Mapped[int] = mapped_column(ForeignKey(Post.id),primary_key=True,)
     user_id: Mapped[int] = mapped_column(ForeignKey(User.id),primary_key=True,)
-    score: Mapped[bool] = mapped_column(db.Boolean)
+    score: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
 
 class Comment(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     post_id: Mapped[int] = mapped_column(ForeignKey(Post.id))
     user_id: Mapped[int] = mapped_column(ForeignKey(User.id))
-    content: Mapped[str] = mapped_column(db.String(256))
-    timestamp: Mapped[str] = mapped_column(db.DateTime)
+    content: Mapped[str] = mapped_column(db.String(256), nullable=False)
+    timestamp: Mapped[str] = mapped_column(db.DateTime, nullable=False)

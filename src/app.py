@@ -36,11 +36,12 @@ with  app.app_context():
     db.create_all()
     init_login_manager(app)
 
-from modules import auth_template, foto_template, view_template, settings_template
+from modules import auth_template, foto_template, view_template, settings_template, groups_template
 app.register_blueprint(auth_template.bp)
 app.register_blueprint(foto_template.bp)
 app.register_blueprint(view_template.bp)
 app.register_blueprint(settings_template.bp)
+app.register_blueprint(groups_template.bp)
 
 @app.context_processor
 def inject_user():
