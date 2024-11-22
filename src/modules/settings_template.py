@@ -6,7 +6,6 @@ from werkzeug.utils import secure_filename
 import os
 from .db import db
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired
 from wtforms.validators import DataRequired, Email, Length
 
 from .user_manager import update_user
