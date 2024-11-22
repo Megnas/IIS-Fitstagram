@@ -5,6 +5,7 @@ import os
 from modules.db import db
 from modules.auth import init_login_manager
 import modules.photo_manager as pm
+import click
 
 app = Flask(__name__)
 
@@ -21,20 +22,13 @@ app.config['SECRET_KEY'] = 'not a secret'
 
 @app.cli.command("purge-db")
 def purge_db():
-    """
-    Purges all data from the database.
-    WARNING: This action is irreversible.
-    """
-    try:
-        # Drop all tables
-        db.drop_all()
-
-        # Recreate tables
-        db.create_all()
-
-        print("Database purged successfully!")
-    except Exception as e:
-        print(f"Error while purging the database: {e}")
+    """Purges all data from all database tables."""
+    meta = db.metadata
+    with app.app_context():
+        for table in reversed(meta.sorted_tables):
+            db.session.execute(table.delete())
+        db.session.commit()
+    click.echo("All tables have been purged.")
 
 with  app.app_context():
     db.init_app(app)
