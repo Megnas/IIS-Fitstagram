@@ -29,3 +29,7 @@ def get_user_image(user_id):
     else:
         #Return error non-existent user
         abort(404, description="User does not exists.")
+
+@bp.route('/group_image/<int:group_id>')
+def get_group_image(group_id):
+    pass
