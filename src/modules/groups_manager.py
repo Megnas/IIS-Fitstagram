@@ -7,8 +7,10 @@ def get_user_groups(user_id: int) -> [Group]:
 def get_all_groups() -> [Group]:
     return db.session.query(Group).all()
     
-def create_new_group(creator_id: int):
+def create_new_group(creator_id: int, name: str, description: str):
     group = Group(owner_id = creator_id)
+    group.name = name
+    group.description = description
     db.session.add(group)
     db.session.commit()
 
