@@ -50,6 +50,7 @@ def edit_group(group_id):
                 description = form.description.data,
                 photo = form.photo.data
             )
+            return redirect(url_for("groups.groups"))
         except Exception as e:
             flash("Could not create group", "danger")
             print(f"Could not create group {e}")
