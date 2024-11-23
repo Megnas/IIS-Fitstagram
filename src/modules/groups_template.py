@@ -5,21 +5,12 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, BooleanField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length
-from .groups_manager import create_new_group, get_all_groups
+from .groups_manager import create_new_group, get_all_groups, get_group
+from . import groups_manager
 
 bp = Blueprint("groups", __name__)
 
-class EditGroupForm(FlaskForm):
-    name = StringField("Name", validators=[DataRequired(), Length(min=1, max=64)])
-    description = StringField("Description")
-    photo = FileField(
-        "Group Image",
-        validators=[FileAllowed(["jpg", "jpeg", "png"], "Images only!")]
-    )
-    visibility = BooleanField("Public")
-    submit = SubmitField("Save changes")
-
-class CreateGroupForm(FlaskForm):
+class GroupForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(), Length(min=1, max=64)])
     description = StringField("Description")
     photo = FileField(
@@ -41,28 +32,56 @@ def groups():
 
 @bp.route("/edit_group/<int:group_id>", methods=['GET', 'POST'])
 @login_required
-def edit_group():
-    form = EditGroupForm()
-    return render_template("edit_group.html")
+def edit_group(group_id):
+    group = get_group(group_id)
+    if (group == None):
+        return abort(404, "Could not find group")
+    if (group.owner_id != current_user.id):
+        return abort(401, "User does not have acces to this group")
+
+    form = GroupForm()
+
+    if form.validate_on_submit():
+        try:
+            groups_manager.edit_group(
+                group_id = group_id,
+                name = form.name.data,
+                visibility = form.visibility.data,
+                description = form.description.data,
+                photo = form.photo.data
+            )
+        except Exception as e:
+            flash("Could not create group", "danger")
+            print(f"Could not create group {e}")
+            
+    if form.errors:
+        flash(f"{form.errors}", "danger")
+        
+    if not form.is_submitted():
+        form.name.data = group.name
+        form.description.data = group.description
+        form.visibility.data = group.visibility
+
+    return render_template("edit_group.html", form=form, group=group)
 
 @bp.route("/create_group", methods=['GET', 'POST'])
 @login_required
 def create_group():
-    form = CreateGroupForm()
+    form = GroupForm()
     user = current_user
     
     if form.validate_on_submit():
-        #try:
-        create_new_group(
-            user.id,
-            form.name.data,
-            form.visibility.data,
-            form.photo.data,
-            form.description.data
-        )
-        #except Exception as e:
-        #    flash("Could not create group", "danger")
-        #    print(f"Could not create group {e}")
+        try:
+            create_new_group(
+                user.id,
+                form.name.data,
+                form.visibility.data,
+                form.photo.data,
+                form.description.data
+            )
+        except Exception as e:
+            flash("Could not create group", "danger")
+            print(f"Could not create group {e}")
             
     if form.errors:
         flash(f"{form.errors}", "danger")

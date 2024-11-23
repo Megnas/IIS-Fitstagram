@@ -7,6 +7,37 @@ Edit group
 
 {% block content %}
 <h1> Edit group </h1>
+<form 
+    method="POST" 
+    action="{{ url_for('groups.edit_group', group_id=group.id) }}" 
+    enctype="multipart/form-data"
+>
+    {{ form.hidden_tag() }}
+    <div>
+        <label for="name">Name</label>
+        {{ form.name(class="form-control") }}
+    </div>
 
-{{ form }}
+    <div>
+        <label for="description">Description</label>
+        {{ form.description(class="form-control") }}
+    </div>
+
+    <div>
+        <img src = "{{ url_for('foto.get_group_image', group_id=group.id) }}"
+        alt="Group Image"
+        style="width: 150px; height: 150px; border-radius: 50%;">
+        <label for="photo">Photo</label>
+        {{ form.photo(class="form-control") }}
+    </div>
+
+    <div>
+        <label for="public">Public</label>
+        {{ form.visibility(class="form-control") }}
+    </div>
+    <div>
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+
+</form>
 {% endblock %}
