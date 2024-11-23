@@ -94,3 +94,33 @@ def get_post_image(post_id):
             return send_file("static/images/user_placeholder.jpg", mimetype="image/jpg")
     else:
         abort(404, description="Post does not exists.")
+
+
+@bp.route('/post_image_miniature/<int:post_id>')
+def get_post_image_miniature(post_id):
+    post: Post = get_post_by_id(post_id)
+    if post:
+        if not post.visibility:
+            if not current_user.is_authenticated:
+                abort(401, description="Not authorized!")
+            if not can_see_post(current_user, post):
+                abort(401, description="Not authorized!")
+        
+        if(post.photo_id):
+            image = get_pic_by_id(post.miniature_id)
+            if(image):
+                #Return image
+                return send_file(
+                    io.BytesIO(image.data),
+                    mimetype=image.mimetype,
+                    as_attachment=False,
+                    download_name=image.name
+                )
+            else:
+                #Return error missing image
+                abort(404, description="Image data not found.")
+        else:
+            #Return place holder
+            return send_file("static/images/user_placeholder.jpg", mimetype="image/jpg")
+    else:
+        abort(404, description="Post does not exists.")

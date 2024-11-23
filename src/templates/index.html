@@ -12,7 +12,7 @@ Home Page
     <li>
         <div>
             <a href="{{ url_for('post.post', post_id=post.id) }}">
-                <img src="{{ url_for('foto.get_post_image', post_id=post.id) }}" 
+                <img src="{{ url_for('foto.get_post_image_miniature', post_id=post.id) }}" 
                  alt="Post Picture" 
                  style="width: 150px; height: 150px;">
                 <p>{{ post.post_date}}</p>
