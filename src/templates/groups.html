@@ -7,19 +7,24 @@ Groups
 
 {% block content %}
 <h1> Groups </h1>
-<ul>
-{% for group in groups %}
-<li>
-    <h3>
-    <a href="{{ url_for('groups.group_homepage', group_id=group.id) }}">
-        {{ group.name}}
-    </a>
-    </h3>
-    <p>{{group.description}}</p>
-    <img src = "{{ url_for('foto.get_group_image', group_id=group.id) }}"
-        alt="Group Image"
-        style="width: 150px; height: 150px; border-radius: 50%;">
-</li>
-{% endfor %}
-</ul>
+{% include "owned_groups.html" %}
+
+<div id="visible_groups" class="group_div">
+    <h2> Visible groups </h2>
+    <ul>
+    {% for group in groups %}
+    <li>
+        <h3>
+        <a href="{{ url_for('groups.group_homepage', group_id=group.id) }}">
+            {{ group.name}}
+        </a>
+        </h3>
+        <p>{{group.description}}</p>
+        <img src = "{{ url_for('foto.get_group_image', group_id=group.id) }}"
+            alt="Group Image"
+            style="width: 150px; height: 150px; border-radius: 50%;">
+    </li>
+    {% endfor %}
+    </ul>
+</div>
 {% endblock %}

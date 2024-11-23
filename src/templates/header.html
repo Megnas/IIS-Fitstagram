@@ -20,6 +20,11 @@
 
 
             {% if user.is_authenticated %}
+            {% if not groups %}
+            <a href="{{ url_for('groups.groups') }} " class="header-login-btn" >
+                Groups
+            </a>
+            {% endif %}
             <a href="{{ url_for('view.profile', user_id=user.id) }}" class="header-login-btn" id="user-info">
                 <div class="user-info">
                     <div class="user-header-pfp">

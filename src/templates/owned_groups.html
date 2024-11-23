@@ -1,25 +1,28 @@
 <!-- templates/groups.html -->
-{% extends "base.html" %}
+<!--  samostatny modul ke groups-->
 
-{% block title %}
-Owned groups
-{% endblock %}
-
-{% block content %}
-<h1> Owned groups </h1>
-<ul>
-{% for group in groups %}
-<li>
-    <h3>
-    <a href="{{ url_for('groups.group_homepage', group_id=group.id) }}">
-        {{ group.name}}
-    </a>
-    </h3>
-    <p>{{group.description}}</p>
-    <img src = "{{ url_for('foto.get_group_image', group_id=group.id) }}"
-        alt="Group Image"
-        style="width: 150px; height: 150px; border-radius: 50%;">
-</li>
-{% endfor %}
-</ul>
-{% endblock %}
+{% if user.is_authenticated %}
+<div>
+    <a href="{{ url_for('groups.create_group') }}">Create a group</a>
+</div>
+{% if owned_groups|length > 0 %}
+<div id="owned_groups" class="group_div">
+    <h1> Owned groups </h1>
+    <ul>
+    {% for group in owned_groups %}
+    <li>
+        <h3>
+        <a href="{{ url_for('groups.group_homepage', group_id=group.id) }}">
+            {{ group.name}}
+        </a>
+        </h3>
+        <p>{{group.description}}</p>
+        <img src = "{{ url_for('foto.get_group_image', group_id=group.id) }}"
+            alt="Group Image"
+            style="width: 150px; height: 150px; border-radius: 50%;">
+    </li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endif %}

@@ -24,8 +24,7 @@ class GroupForm(FlaskForm):
 @bp.route("/owned_groups", methods=['GET'])
 @login_required
 def owned_groups():
-    groups = get_user_owned_groups(current_user.id)       
-    return render_template("owned_groups.html", groups=groups)
+    return render_template("owned_groups.html", owned_groups=owned_groups)
 
 @bp.route("/groups", methods=['GET'])
 def groups():
@@ -33,7 +32,8 @@ def groups():
         groups = get_user_accesible_groups(current_user.id)       
     else:
         groups = get_public_groups()
-    return render_template("groups.html", groups=groups)
+    owned_groups = get_user_owned_groups(current_user.id)
+    return render_template("groups.html", groups=groups, owned_groups = owned_groups)
 
 @bp.route("/group_homepage/<int:group_id>", methods=['GET'])
 def group_homepage(group_id):
@@ -104,7 +104,7 @@ def create_group():
                 description = form.description.data,
                 photo = form.photo.data
             )
-            return redirect(url_for("groups.owned_groups"))
+            return redirect(url_for("groups.groups")) # TODO redirect to group homepage
         except Exception as e:
             flash("Could not create group", "danger")
             print(f"Could not create group {e}")
