@@ -66,6 +66,7 @@ post_tag = db.Table("post_tag",
     db.Column("tag_id", db.Integer, db.ForeignKey("tag.id")),
     PrimaryKeyConstraint('post_id', 'tag_id'))
 
+
 class Post(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     owner_id: Mapped[int] = mapped_column(ForeignKey(User.id), nullable=False)
@@ -92,9 +93,15 @@ class GroupInvite(db.Model):
     date_created: Mapped[str] = mapped_column(db.DateTime)
 
 class Score(db.Model):
-    post_id: Mapped[int] = mapped_column(ForeignKey(Post.id),primary_key=True,)
-    user_id: Mapped[int] = mapped_column(ForeignKey(User.id),primary_key=True,)
+    post_id: Mapped[int] = mapped_column(ForeignKey(Post.id),nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey(User.id),nullable=False)
     score: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
+
+    __table_args__ = (
+    db.PrimaryKeyConstraint(
+        post_id, user_id,
+        ),
+    )
 
 class Comment(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
