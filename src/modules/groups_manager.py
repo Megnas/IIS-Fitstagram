@@ -6,7 +6,7 @@ def get_user_groups(user_id: int) -> [Group]:
     return user.groups
 
 def get_group(group_id: int) -> Group:
-    group = db.session.query(Group).filter(Group.id == group_id)
+    group = db.session.query(Group).filter(Group.id == group_id).first()
     return group
 
 def get_all_groups() -> [Group]:
@@ -31,6 +31,25 @@ def create_new_group(
         group.photo_id = None 
     group.visibility = visibility
     db.session.add(group)
+    db.session.commit()
+    
+def edit_group(
+    group_id: int,
+    name: str = None,
+    visibility: bool = None,
+    description: str = None,
+    photo = None
+):
+    group = db.session.query(Group).filter(Group.id == group_id).first()
+    if (name != None):
+        group.name = name
+    if (visibility != None):
+        group.visibility = visibility
+    if (description != None):
+        group.description = description
+    if (photo != None):
+        grop.photo_id = upload_image(photo)
+
     db.session.commit()
 
 def delete_group(group_id: int):

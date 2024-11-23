@@ -17,7 +17,6 @@ class EditGroupForm(FlaskForm):
         validators=[FileAllowed(["jpg", "jpeg", "png"], "Images only!")]
     )
     visibility = BooleanField("Public")
-    invite_user = SelectField("Users",choices = [("Tonda", 1)])
     submit = SubmitField("Save changes")
 
 class CreateGroupForm(FlaskForm):
