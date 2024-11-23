@@ -12,7 +12,8 @@ Settings
     <div>
         <img src="{{ url_for('foto.get_user_image', user_id=user.id) }}" 
              alt="Profile Picture" 
-             style="width: 150px; height: 150px; border-radius: 50%;">
+             style="width: 150px; height: 150px; border-radius: 50%;"
+             id="imgPrev">
     </div>
 
     <!-- Flash message for success or errors -->
@@ -59,4 +60,15 @@ Settings
             {{ form.submit(class="btn btn-primary") }}
         </div>
     </form>
+
+<script>
+    let imgInp = document.getElementById("profile_picture");
+    let imgPrev = document.getElementById("imgPrev");
+    imgInp.onchange = evt => {
+        const [file] = imgInp.files
+        if (file) {
+            imgPrev.src = URL.createObjectURL(file);
+        }
+    }
+</script>
 {% endblock %}

@@ -21,7 +21,7 @@ Login
 <!-- Profile Form -->
 <form method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
-
+    <img id="img_preview" src="#" alt="" style="width: 50%" />
     <div class="form-group">
         {{ form.post_photo.label }}
         {{ form.post_photo() }}
@@ -76,5 +76,14 @@ Login
         // Listen for changes to the visibility checkbox
         visibilityCheckbox.addEventListener('change', toggleUserField);
     });
+
+    let imgInp = document.getElementById("{{ form.post_photo.id }}");
+    let imgPrev = document.getElementById("img_preview");
+    imgInp.onchange = evt => {
+    const [file] = imgInp.files
+    if (file) {
+      imgPrev.src = URL.createObjectURL(file)
+    }
+  }
 </script>
 {% endblock %}

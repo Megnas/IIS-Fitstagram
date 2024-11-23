@@ -225,9 +225,6 @@ body {
     border: 0.2em solid #AAA;
 }
 
-.scroll_view_div_padding{
-    padding-bottom: 1em;
-}
 
 
 /* Post View */
@@ -255,6 +252,7 @@ body {
 
 .post_view_container_img img{
     border: 0.1em solid #AAA;
+    padding: 0;
 }
 
 .post_view_container_user{
@@ -280,6 +278,10 @@ body {
 
 .post_view_container p{
     margin-left: 2.5%;
+}
+
+.scroll_view_div_margin{
+    margin-bottom: 1em;
 }
 
 
