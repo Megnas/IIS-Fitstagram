@@ -36,9 +36,10 @@ def register():
 
     if form.validate_on_submit():
         try:
-            user_manager.create_user(username=form.username.data, pwd=form.password.data, mail=form.email.data, uid=form.unique_id.data)
-            flash('Registration successful! You can now log in.', 'success')
-            return redirect(url_for('auth.login'))
+            user = user_manager.create_user(username=form.username.data, pwd=form.password.data, mail=form.email.data, uid=form.unique_id.data)
+            login_user(user)
+            #flash('Registration successful! You can now log in.', 'success')
+            return redirect(url_for('view.index'))
         except Exception as e:
             flash('Registration Failed.', 'danger')
             print("Registration failed!", e)
@@ -59,7 +60,7 @@ def login():
         user = user_manager.login_user(mail=form.email.data, pwd=form.password.data)
         if user:
             login_user(user)
-            flash('Logged in successfully!', 'success')
+            #flash('Logged in successfully!', 'success')
             return redirect(url_for('view.index'))
         flash('Invalid credentials, please try again.', 'danger')
     return render_template('login.html', form=form)
