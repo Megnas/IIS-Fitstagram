@@ -1,11 +1,12 @@
 from .db import db, Post, Tag, Group, User, user_group
 from datetime import datetime
-from .photo_manager import upload_image
+from .photo_manager import upload_image_to_webg, upload_image_to_webg_resized
 from sqlalchemy import or_
 
 def create_new_post(user_id: int, post_image, post_decs: str, post_tags: list[Tag], groups: list[Group], visibility: bool, allow_users: list[User] = None) -> Post:
-    image_id = upload_image(post_image)
-    post: Post = Post(owner_id=user_id, description = post_decs, post_date=datetime.now(), photo_id=image_id, visibility=visibility)
+    image_id = upload_image_to_webg(post_image)
+    miniature_id = upload_image_to_webg_resized(post_image)
+    post: Post = Post(owner_id=user_id, description = post_decs, post_date=datetime.now(), photo_id=image_id, miniature_id=miniature_id, visibility=visibility)
 
     for tag in post_tags:
         if tag not in post.tags:

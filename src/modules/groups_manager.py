@@ -1,5 +1,5 @@
 from .db import db, User, Group, Roles
-from .photo_manager import upload_image
+from .photo_manager import upload_image_to_webg_resized
 from sqlalchemy import or_ 
 
 def get_all_groups() -> [Group]:
@@ -76,7 +76,7 @@ def create_new_group(
         group.description = ""
     if (photo):
         print(photo)
-        group.photo_id = upload_image(photo)
+        group.photo_id = upload_image_to_webg_resized(photo, quality=90)
     else:
         group.photo_id = None 
     group.visibility = visibility
@@ -98,7 +98,7 @@ def edit_group(
     if (description != None):
         group.description = description
     if (photo != None):
-        grop.photo_id = upload_image(photo)
+        group.photo_id = upload_image_to_webg_resized(photo, quality=90)
 
     db.session.commit()
 
@@ -143,7 +143,7 @@ def change_group_name(group_id: int, name: str):
     db.session.commit()
 
 def change_group_image(group_id: int, image):
-    photo_id = upload_image(image)
+    photo_id = upload_image_to_webg_resized(image, quality=90)
     group = db.session.query(Group).filter(Group.id == group_id).first()
     group.photo_id = photo_id
     db.session.commit()

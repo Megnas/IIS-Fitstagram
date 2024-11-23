@@ -2,7 +2,7 @@ import string
 from .db import db, User, Roles
 from hashlib import sha224
 
-from .photo_manager import upload_image
+from .photo_manager import upload_image_to_webg_resized
 
 def create_user(username: str, pwd: str, mail: str, uid: str) -> User:
     hashed_pwd = sha224(pwd.encode('utf-8')).hexdigest()
@@ -13,7 +13,7 @@ def create_user(username: str, pwd: str, mail: str, uid: str) -> User:
 
 def update_user(user: User, username=None , email=None, pwd=None, pfp=None, uid=None):
     if pfp:
-        image_id = upload_image(pfp)
+        image_id = upload_image_to_webg_resized(pfp, quality=90)
         user.photo_id = image_id
     if username:
         user.username = username
