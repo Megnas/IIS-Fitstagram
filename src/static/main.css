@@ -10,6 +10,8 @@ body{
 
 main {
     flex: 1;
+    width: 95%;
+    padding: 0 2.5%;
 }
 
 footer {
@@ -145,10 +147,9 @@ body {
 /* Groups */
 
 .group_list_div{
-    border: #86989B ;
+    border-bottom: 1px solid #333;
     margin-left: 4em;
     margin-right: 4em;
-
 }
 
 .group_list_div ul{
@@ -156,6 +157,7 @@ body {
     flex: 1 1 auto;
     list-style: none;
     overflow: scroll;
+    flex-wrap: wrap;
 }
 
 
@@ -164,6 +166,7 @@ body {
     margin: 1em;
     text-decoration: none;
 }
+
 
 .group_list_item{
     width: 100%;
@@ -179,8 +182,23 @@ body {
 
 
 .group_list_item:hover{
-    background-color: #c8e4e8;
+    background-color: #b9f9ff;
     transition: 0.2s;
 }
 
 /* Content */
+
+.index_post_container{
+    width: 110em;
+}
+
+.index_post_container ul{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-auto-flow: row dense;
+    list-style: none;
+}
+
+.index_post_container li{
+    text-decoration: none;
+}

@@ -17,10 +17,6 @@
 
 
         <div class="header-login">
-            {% if user.is_authenticated %}
-            <a href="{{ url_for('post.create_post') }} " class="header-login-btn" >
-                Upload
-            </a>
             {% if request.path == url_for('groups.groups') %}
             <a href="{{ url_for('groups.create_group') }} " class="header-login-btn" >
                 Create Group
@@ -30,6 +26,10 @@
                 Groups
             </a>
             {% endif %}
+            {% if user.is_authenticated %}
+            <a href="{{ url_for('post.create_post') }} " class="header-login-btn" >
+                Upload
+            </a>
             <a href="{{ url_for('view.profile', user_id=user.id) }}" class="header-login-btn" id="user-info">
                 <div class="user-info">
                     <div class="user-header-pfp">
