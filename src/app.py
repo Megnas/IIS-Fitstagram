@@ -5,6 +5,7 @@ import os
 from modules.db import db
 from modules.auth import init_login_manager
 import modules.photo_manager as pm
+import modules.user_manager as um
 import click
 
 app = Flask(__name__)
@@ -50,6 +51,13 @@ app.register_blueprint(post_template.bp)
 @app.context_processor
 def inject_user():
     return {'user': current_user}
+
+@app.context_processor
+def utility_functions():
+    #retuns user object from id
+    def get_user(usr_id: int):
+        return um.get_user(usr_id)
+    return dict(get_user=get_user)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
