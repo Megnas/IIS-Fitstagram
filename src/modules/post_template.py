@@ -98,6 +98,6 @@ def post(post_id):
     else:
         abort(404, description="User does not exists.")
 
-@bp.route("/post/<int:post_id>")
+@bp.route("/edit_post/<int:post_id>")
 def edit_post(post_id):
     abort(404, description="Post does not exists.")
