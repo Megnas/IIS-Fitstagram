@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request
 from flask_login import login_required, current_user
 from . import groups_manager
 from .db import Roles
@@ -8,6 +8,7 @@ from wtforms import StringField, BooleanField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length
 from .groups_manager import create_new_group, get_user_accesible_groups, get_group, get_user_owned_groups, get_public_groups, user_is_member, get_group_owner
 from . import groups_manager
+from .post_manager import get_accessible_posts_group
 
 bp = Blueprint("groups", __name__)
 
@@ -63,17 +64,22 @@ def groups():
 def group_homepage(group_id):
     group = get_group(group_id=group_id)       
 
+    if (group == None):
+        return abort(404, "Could not find group")
+
+    page = request.args.get('page', 1, type=int)
+    posts, tototal, pages = get_accessible_posts_group(current_user, page=page, per_page=(4 * 6), group_id=group.id)
 
     if (current_user.is_authenticated):
         if (current_user.id == group.owner_id or
             current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN
         ):
-            return render_template("group_homepage.html", group=group, owner=True)
+            return render_template("group_homepage.html", group=group, owner=True, posts=posts, page=page, pages=pages)
         if ( user_is_member(user_id=current_user.id, group_id=group.id)):
-            return render_template("group_homepage.html", group=group, owner=False)
+            return render_template("group_homepage.html", group=group, owner=False, posts=posts, page=page, pages=pages)
 
     if (group.visibility):
-        return render_template("group_homepage.html", group=group, owner=False)
+        return render_template("group_homepage.html", group=group, owner=False, posts=posts, page=page, pages=pages)
 
     return abort(401, "User does not have acces to this group")
             

@@ -97,3 +97,7 @@ def post(post_id):
         return render_template("post.html", post=post, p_user=get_user(post.owner_id))
     else:
         abort(404, description="User does not exists.")
+
+@bp.route("/post/<int:post_id>")
+def edit_post(post_id):
+    abort(404, description="Post does not exists.")
