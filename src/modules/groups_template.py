@@ -9,12 +9,13 @@ from wtforms.validators import DataRequired, Length
 from .groups_manager import create_new_group, get_user_accesible_groups, get_group, get_user_owned_groups, get_public_groups, user_is_member, get_group_owner
 from . import groups_manager
 from .post_manager import get_accessible_posts_group
+from wtforms import widgets
 
 bp = Blueprint("groups", __name__)
 
 class GroupForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired(), Length(min=1, max=64)])
-    description = StringField("Description")
+    description = StringField("Description", widget=widgets.TextArea())
     photo = FileField(
         "Group Image",
         validators=[FileAllowed(["jpg", "jpeg", "png"], "Images only!")]

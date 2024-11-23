@@ -12,7 +12,7 @@ main {
     flex: 1;
     width: 95%;
     padding: 1em 2%;
-    margin: auto;
+    margin: 4em auto 2em auto;
 
 }
 
@@ -41,10 +41,12 @@ body {
 
 /* HEADER - DO NOT TOUCH OR EVERYTHING WILL BREAK */
 .header-container {
+    width: 97%;
+    position: fixed;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 2.5% 5px 1em;
+    padding: 5px 1.5% 5px 1.5%;
     background-color: #f4f4f4;
     border-bottom: 1px solid #ddd;
     height: 4em;
@@ -210,6 +212,9 @@ body {
 .gallery_post_list_container img{
     width: 95%;
     margin: auto;
+    height: auto;
+    max-height: 20em;
+    object-fit: cover;
     border: 0.1em solid #AAA;
 }
 
@@ -241,18 +246,33 @@ body {
     border: 0.2em solid #AAA;
     border-radius: 0.6em;
     width: 100%;
+    transition: 0.2s;
+}
+
+.post_view_hover:hover{
+    transition: 0.2s;
+    background: #eefdff;
+}
+
+.post_view_container a{
+    color: #333;
+}
+
+.post_view_container_img_limit{
+    max-height: 80em;
+    object-fit: cover;
 }
 
 .post_view_container_img{
     width: 95%;
     height: auto;
     margin: auto;
-    padding: 1em 2.5%;
+    padding: 0;
 }
 
 .post_view_container_img img{
     border: 0.1em solid #AAA;
-    padding: 0;
+    width: 100%;
 }
 
 .post_view_container_user{
@@ -284,6 +304,45 @@ body {
     margin-bottom: 1em;
 }
 
+.post_view_comment_list{
+    list-style: none;
+    padding: 0 2em;
+}
+
+.post_view_comment_list li{
+    border-bottom: 1px solid #333;
+    margin-bottom: 0;
+    padding-bottom: 2em;
+}
+
+.post_view_comment_user{
+    font-size: 1rem;
+    display: flex;
+    margin: 1em 0;
+    align-items: center;
+    color: black;
+}
+
+.post_view_comment_user img{
+    border: 0.1em solid #AAA;
+    border-radius: 50%;
+    margin-right: 1em;
+}
+
+.post_view_comment_content{
+    font-size: 0.8em;
+}
+
+.post_view_comment_user img{
+    height: 3em;
+}
+
+.post_view_comment_div{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 
 
 .rounded_corners{
@@ -312,7 +371,14 @@ body {
     flex-direction: column;
 }
 
-.upload_form img{
+.upload_form_pfp{
+    margin: auto;
+    width: 50%;
+    border: 0.1em solid #AAA;
+}
+
+
+.upload_form_img{
     margin: auto;
     width: 90%;
     border: 0.1em solid #AAA;
@@ -346,4 +412,8 @@ body {
 
 .upload_form_list ul>li>input{
     height: 1.2em;
+}
+
+.upload_form_like input{
+    margin: 0 2.5%
 }

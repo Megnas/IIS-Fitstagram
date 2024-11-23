@@ -5,7 +5,7 @@
     {% set p_user = get_user(post.owner_id) %}
 
 
-        <div class="post_view_container scroll_view_div_margin">
+        <div class="post_view_container scroll_view_div_margin post_view_hover">
             <a href="{{ url_for('post.post', post_id=post.id) }}">
                 <div>
                     <div onclick="document.location.href = '{{ url_for('view.profile', user_id=p_user.id) }}'; return false" class="post_view_container_user">
@@ -13,7 +13,8 @@
                         <p> By: {{ p_user.username }} ({{ p_user.unique_id }}) </p>
                     </div>
                     <div class="post_view_container_img">
-                        <img src="{{ url_for('foto.get_post_image', post_id=post.id) }}" alt="user image" class="post_view_container_img">
+                        <img src="{{ url_for('foto.get_post_image', post_id=post.id) }}" alt="user image"
+                             class="post_view_container_img post_view_container_img_limit">
                     </div>
                     <p>Date: {{ post.post_date }}</p>
                     <p>Description: {{ post.description }}</p>

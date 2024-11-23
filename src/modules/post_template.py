@@ -42,7 +42,7 @@ class PostDislike(FlaskForm):
     submit = SubmitField('Dislike')
 
 class CreateComment(FlaskForm):
-    description = StringField('Comment', validators=[Length(min=1, max=256)])
+    description = StringField('Comment', validators=[Length(min=1, max=256)], widget=widgets.TextArea())
     submit = SubmitField('Create Comment')
 
 @bp.route('/create_post', methods=['GET', 'POST'])

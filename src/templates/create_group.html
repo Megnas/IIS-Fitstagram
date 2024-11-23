@@ -21,35 +21,49 @@ Create Group
 {% endif %}
 {% endwith %}
 
+<div class="general_view_page_container">
+    <form
+        method="POST"
+        action="{{ url_for('groups.create_group') }}"
+        enctype="multipart/form-data"
+        class="upload_form"
+    >
+        {{ form.hidden_tag() }}
+        <img id="img_preview" src="/static/images/upload_img.png" alt="" class="upload_form_pfp" style="border-radius: 50%;"/>
+        <div class="form-group">
+            <label for="name">Name</label>
+            {{ form.name(class="form-control") }}
+        </div>
 
-<form 
-    method="POST" 
-    action="{{ url_for('groups.create_group') }}" 
-    enctype="multipart/form-data"
->
-    {{ form.hidden_tag() }}
-    <div>
-        <label for="name">Name</label>
-        {{ form.name(class="form-control") }}
-    </div>
+        <div class="form-group upload_form_desc">
+            <label for="description">Description</label>
+            {{ form.description(class="form-control") }}
+        </div>
 
-    <div>
-        <label for="description">Description</label>
-        {{ form.description(class="form-control") }}
-    </div>
+        <div class="form-group upload_form_picture">
+            <label for="photo">Photo</label>
+            {{ form.photo(class="form-control") }}
+        </div>
 
-    <div>
-        <label for="photo">Photo</label>
-        {{ form.photo(class="form-control") }}
-    </div>
-
-    <div>
-        <label for="public">Public</label>
-        {{ form.visibility(class="form-control") }}
-    </div>
-    <div>
-        {{ form.submit(class="btn btn-primary") }}
-    </div>
+        <div class="form-group">
+            <label for="public">Public</label>
+            {{ form.visibility(class="form-control") }}
+        </div>
+        <div class="form-group ">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
 
 </form>
+</div>
+
+<script>
+    let imgInp = document.getElementById("photo");
+    let imgPrev = document.getElementById("img_preview");
+    imgInp.onchange = evt => {
+        const [file] = imgInp.files
+        if (file) {
+            imgPrev.src = URL.createObjectURL(file)
+        }
+    }
+</script>
 {% endblock %}

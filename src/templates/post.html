@@ -24,40 +24,51 @@ Post
         </p>
         <p>Score: {{ score_total }} ({{ score_per }})</p>
         {%if user.is_authenticated %}
+
         <!-- Like Form -->
-        <form method="POST" action="{{ url_for('post.like', post_id=post.id) }}">
-            {{ like_form.csrf_token }}
-            {{ like_form.submit(class="btn btn-success") }}
-        </form>
-        
-        <!-- Dislike Form -->
-        <form method="POST" action="{{ url_for('post.dislike', post_id=post.id) }}">
-            {{ dislike_form.csrf_token }}
-            {{ dislike_form.submit(class="btn btn-danger") }}
-        </form>
+        <div class="upload_form_like">
+            <form method="POST" action="{{ url_for('post.like', post_id=post.id) }}" class="upload_form">
+                {{ like_form.csrf_token }}
+                {{ like_form.submit(class="btn btn-success") }}
+            </form>
 
-        <p>Like Statatus {{ score }}</p>
+            <!-- Dislike Form -->
+            <form method="POST" action="{{ url_for('post.dislike', post_id=post.id) }}" class="upload_form">
+                {{ dislike_form.csrf_token }}
+                {{ dislike_form.submit(class="btn btn-danger") }}
+            </form>
+        </div>
 
-        <form method="POST" action="{{ url_for('post.post', post_id=post.id) }}">
+        <p>Like Status: {{ score }}</p>
+
+        <form method="POST" action="{{ url_for('post.post', post_id=post.id) }}" class="upload_form">
             {{ comment.hidden_tag() }}
             
-            <div>
+            <div class="form-group upload_form_desc">
               <label for="description">Comment:</label>
               {{ comment.description(size=50) }}
             </div>
         
-            <div>
+            <div class="form-group">
               {{ comment.submit() }}
             </div>
           </form>
         {%endif %}
-        <ul>
+        <ul class="post_view_comment_list">
             {% for com in comments %}
+            {% with c_user = get_user(com.user_id) %}
               <li>
-                <p>ID: {{ com.id }}</p>
-                <h3>User: {{ get_user(com.user_id).username }} ({{ get_user(com.user_id).unique_id }})</h3>
-                <span>{{ com.content }}</span>
-            </li>
+                  <div class="post_view_comment_div">
+                    <a href="{{ url_for('view.profile', user_id=user.id) }}">
+                        <div class="post_view_comment_user">
+                            <img src="{{ url_for('foto.get_user_image', user_id=c_user.id) }}" alt="user image">
+                            <span>User: {{ c_user.username }} ({{ c_user.unique_id }})</span>
+                        </div>
+                    </a>
+                    <span class="post_view_comment_content">{{ com.content }}</span>
+                  </div>
+                </li>
+            {% endwith %}
             {% endfor %}
           </ul>
     </div>

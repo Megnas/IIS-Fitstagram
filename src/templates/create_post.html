@@ -23,7 +23,7 @@ Login
     <!-- Create post Form -->
     <form method="POST" enctype="multipart/form-data" class="upload_form">
         {{ form.hidden_tag() }}
-        <img id="img_preview" src="/static/images/upload_img.png" alt="" />
+        <img id="img_preview" src="/static/images/upload_img.png" alt="" class="upload_form_img"/>
         <div class="form-group upload_form_picture">
             {{ form.post_photo.label }}
             {{ form.post_photo() }}
