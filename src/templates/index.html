@@ -7,5 +7,18 @@ Home Page
 
 {% block content %}
 <h2>Welcome to the Homepage</h2>
-<p>This is the main content area of the homepage.</p>
+<ul>
+{% for post in posts %}
+    <li>
+        <div>
+            <a href="{{ url_for('post.post', post_id=post.id) }}">
+                <img src="{{ url_for('foto.get_post_image', post_id=post.id) }}" 
+                 alt="Post Picture" 
+                 style="width: 150px; height: 150px;">
+                <p>{{ post.post_date}}</p>
+            </a>
+        </div>
+    </li>
+  {% endfor %}
+</ul>
 {% endblock %}
