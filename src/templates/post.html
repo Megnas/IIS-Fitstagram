@@ -6,7 +6,7 @@ Post
 {% endblock %}
 
 {% block content %}
-<div class="post_view_page_container">
+<div class="general_view_page_container">
     <div class="post_view_container">
         <a href="{{ url_for('view.profile', user_id=p_user.id) }}" class="post_view_container_user">
             <img src="{{ url_for('foto.get_user_image', user_id=p_user.id) }}" alt="user image">

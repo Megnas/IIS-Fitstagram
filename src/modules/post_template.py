@@ -11,6 +11,7 @@ from .user_manager import get_user_from_uid, get_user
 from .post_manager import create_new_post, get_post_by_id, can_see_post, get_like_status, change_like_status, get_post_score, create_comment, get_comments
 from wtforms import widgets
 
+
 from .db import Post
 
 bp = Blueprint('post', __name__)
@@ -21,7 +22,7 @@ class QuerySelectMultipleFieldWithCheckboxes(QuerySelectMultipleField):
 
 class PostForm(FlaskForm):
     post_photo = FileField('Picture', validators=[DataRequired(), FileAllowed(['jpg', 'jpeg', 'png', 'webp'], 'Images only!')])
-    description = StringField('Description', validators=[Length(min=0, max=256)])
+    description = StringField('Description', validators=[Length(min=0, max=256)], widget=widgets.TextArea())
     tags = StringField('Tags', validators=[ 
         Length(min=0, max=512), 
         Regexp(r'^[a-z0-9_ ]*$', message="Tags must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.")

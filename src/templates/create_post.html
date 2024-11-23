@@ -6,55 +6,58 @@ Login
 {% endblock %}
 
 {% block content %}
-<h1>Create Post</h1>
-    <!-- Flash message for success or errors -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-    <ul>
-        {% for category, message in messages %}
-            <li class="{{ category }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-{% endwith %}
+<div class="general_view_page_container">
 
-<!-- Profile Form -->
-<form method="POST" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-    <img id="img_preview" src="#" alt="" style="width: 50%" />
-    <div class="form-group">
-        {{ form.post_photo.label }}
-        {{ form.post_photo() }}
-    </div>
+    <h1>Create Post</h1>
+        <!-- Flash message for success or errors -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul>
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
 
-    <div class="form-group">
-        {{ form.description.label }}
-        {{ form.description() }}
-    </div>
+    <!-- Create post Form -->
+    <form method="POST" enctype="multipart/form-data" class="upload_form">
+        {{ form.hidden_tag() }}
+        <img id="img_preview" src="/static/images/upload_img.png" alt="" />
+        <div class="form-group upload_form_picture">
+            {{ form.post_photo.label }}
+            {{ form.post_photo() }}
+        </div>
 
-    <div class="form-group">
-        {{ form.tags.label }}
-        {{ form.tags() }}
-    </div>
+        <div class="form-group upload_form_desc">
+            {{ form.description.label }}
+            {{ form.description() }}
+        </div>
 
-    <div class="form-group" id="group-field">
-        {{ form.groups.label }}
-        {{ form.groups() }}
-    </div>
+        <div class="form-group">
+            {{ form.tags.label }}
+            {{ form.tags() }}
+        </div>
 
-    <div class="form-group">
-        {{ form.visibility.label }}
-        {{ form.visibility() }} <!-- Visibility toggle checkbox -->
-    </div>
+        <div class="form-group upload_form_list" id="group-field" >
+            {{ form.groups.label }}
+            {{ form.groups() }}
+        </div>
 
-    <div class="form-group" id="user-field">
-        {{ form.user.label }}
-        {{ form.user() }}
-    </div>
+        <div class="form-group">
+            {{ form.visibility.label }}
+            {{ form.visibility() }} <!-- Visibility toggle checkbox -->
+        </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+        <div class="form-group" id="user-field">
+            {{ form.user.label }}
+            {{ form.user() }}
+        </div>
 
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</div>
 <script>
     // JavaScript to handle showing or hiding the user field based on visibility checkbox
     document.addEventListener('DOMContentLoaded', function () {
