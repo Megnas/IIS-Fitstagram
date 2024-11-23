@@ -59,7 +59,7 @@ Post
             {% with c_user = get_user(com.user_id) %}
               <li>
                   <div class="post_view_comment_div">
-                    <a href="{{ url_for('view.profile', user_id=user.id) }}">
+                    <a href="{{ url_for('view.profile', user_id=c_user.id) }}">
                         <div class="post_view_comment_user">
                             <img src="{{ url_for('foto.get_user_image', user_id=c_user.id) }}" alt="user image">
                             <span>User: {{ c_user.username }} ({{ c_user.unique_id }})</span>
