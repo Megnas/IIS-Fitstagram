@@ -10,7 +10,7 @@ def create_user(username: str, pwd: str, mail: str, uid: str):
     db.session.add(new_user)
     db.session.commit()
 
-def update_user(user: User, username=None , email=None, pwd=None, pfp=None):
+def update_user(user: User, username=None , email=None, pwd=None, pfp=None, uid=None):
     if pfp:
         image_id = upload_image(pfp)
         user.photo_id = image_id
@@ -20,6 +20,8 @@ def update_user(user: User, username=None , email=None, pwd=None, pfp=None):
         user.email = email
     if pwd:
         user.password_hash = sha224(pwd.encode('utf-8')).hexdigest()
+    if uid:
+        user.unique_id = uid
 
     db.session.commit()
 

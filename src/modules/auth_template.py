@@ -3,14 +3,25 @@ from . import user_manager
 from flask_login import login_required, logout_user, login_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, Length
+from wtforms.validators import DataRequired, Email, Length, Regexp
 
 bp = Blueprint('auth', __name__)
 
 class RegisterForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email(), Length(min=5, max=128)])
-    unique_id = StringField('UID', validators=[DataRequired(), Length(min=5, max=128)])
-    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=32)])
+    email = StringField('Email', validators=[
+        DataRequired(), 
+        Email(), 
+        Length(min=5, max=128)
+    ])
+    unique_id = StringField('UID', validators=[
+        DataRequired(), 
+        Length(min=5, max=128), 
+        Regexp(r'^[a-z0-9_]+$', message="UID must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.")
+    ])
+    username = StringField('Username', validators=[
+        DataRequired(), 
+        Length(min=3, max=32)
+    ])
     password = PasswordField('New Password')
     submit = SubmitField('Register')
 
@@ -31,9 +42,13 @@ def register():
         except Exception as e:
             flash('Registration Failed.', 'danger')
             print("Registration failed!", e)
-    else:
-        # If form data is not valid, flash a message and render the form again
-        flash('The provided data is not valid. Please check your inputs.', 'warning')
+
+    if form.unique_id.errors:
+        flash("User ID must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.", 'danger')
+
+    if form.email.errors:
+        flash("Email format invalid", 'danger')
+
     return render_template('register.html', form=form)
 
 @bp.route('/login', methods=['GET', 'POST'])
