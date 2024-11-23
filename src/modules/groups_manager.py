@@ -1,6 +1,13 @@
 from .db import db, User, Group
 from .photo_manager import upload_image
 
+def user_is_member(user_id: int, group_id: int) -> bool:
+    user = db.session.query(User).filter(User.id == user_id)
+    group = db.session.query(Group).filter(Group.id == group_id).first()
+    if (user.id == group.owner_id or user.id in group.users):
+        return True
+    return False
+
 def get_user_groups(user_id: int) -> [Group]:
     user = db.session.query(User).filter(User.id == user_id)
     return user.groups

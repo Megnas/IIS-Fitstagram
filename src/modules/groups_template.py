@@ -80,6 +80,7 @@ def create_group():
                 form.photo.data,
                 form.description.data
             )
+            return redirect(url_for("groups.groups"))
         except Exception as e:
             flash("Could not create group", "danger")
             print(f"Could not create group {e}")
