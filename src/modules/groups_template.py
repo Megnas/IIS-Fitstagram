@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, BooleanField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length
-from .groups_manager import create_new_group, get_user_accesible_groups, get_group, get_user_owned_groups, get_public_groups, user_is_member
+from .groups_manager import create_new_group, get_user_accesible_groups, get_group, get_user_owned_groups, get_public_groups, user_is_member, get_group_owner
 from . import groups_manager
 
 bp = Blueprint("groups", __name__)
@@ -21,18 +21,32 @@ class GroupForm(FlaskForm):
     visibility = BooleanField("Public")
     submit = SubmitField("Save changes")
     
-@bp.route("/owned_groups", methods=['GET'])
-@login_required
-def owned_groups():
-    return render_template("owned_groups.html", owned_groups=owned_groups)
+@bp.route("/group_users/<int:group_id>")
+def group_users(group_id):
+    group = get_group(group_id=group_id)       
+    owner = get_group_owner(group_id=group_id)
+
+    if (current_user.is_authenticated):
+        if (current_user.id == group.owner_id or
+            current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN
+        ):
+            return render_template("group_users_management.html", group=group)
+        if ( user_is_member(user_id=current_user.id, group_id=group.id)):
+            return render_template("group_users.html", group=group, owner=owner)
+
+    if (group.visibility):
+        return render_template("group_users.html", group=group, owner=owner)
+
+    return abort(401, "User does not have acces to this group")
 
 @bp.route("/groups", methods=['GET'])
 def groups():
     if (current_user.is_authenticated):
         groups = get_user_accesible_groups(current_user.id)       
+        owned_groups = get_user_owned_groups(current_user.id)
     else:
         groups = get_public_groups()
-    owned_groups = get_user_owned_groups(current_user.id)
+        owned_groups = None
     return render_template("groups.html", groups=groups, owned_groups = owned_groups)
 
 @bp.route("/group_homepage/<int:group_id>", methods=['GET'])
@@ -104,7 +118,7 @@ def create_group():
                 description = form.description.data,
                 photo = form.photo.data
             )
-            return redirect(url_for("groups.groups")) # TODO redirect to group homepage
+            return redirect(url_for("groups.group_homepage"))
         except Exception as e:
             flash("Could not create group", "danger")
             print(f"Could not create group {e}")

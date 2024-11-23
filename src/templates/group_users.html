@@ -1,0 +1,18 @@
+<!-- templates/group_users.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Group users
+{% endblock %}
+
+{% block content %}
+<h1> Group users </h1>
+
+<ul>
+<li>{{owner.name}}{{owner.unique_id}} (owner)</li>
+{% for user in group.users %}
+    <li>{{user.name}}{{user.unique_id}}</li>
+{% endfor %}
+</ul>
+
+{% endblock %}
