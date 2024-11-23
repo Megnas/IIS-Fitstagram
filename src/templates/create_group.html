@@ -1,0 +1,55 @@
+<!-- templates/groups.html -->
+{% extends "base.html" %}
+
+
+{% block title %}
+Create Group
+{% endblock %}
+
+{% block content %}
+
+<h1> Create Group </h1>
+
+<!-- Flash message for success or errors -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    <ul>
+        {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endwith %}
+
+
+<form 
+    method="POST" 
+    action="{{ url_for('groups.create_group') }}" 
+    enctype="multipart/form-data"
+>
+    {{ form.hidden_tag() }}
+    <div>
+        <label for="name">Name</label>
+        {{ form.name(class="form-control") }}
+    </div>
+
+    <div>
+        <label for="description">Description</label>
+        {{ form.description(class="form-control") }}
+    </div>
+
+    <div>
+        <label for="photo">Photo</label>
+        {{ form.photo(class="form-control") }}
+    </div>
+
+    <div>
+        <label for="public">Public</label>
+        {{ form.visibility(class="form-control") }}
+    </div>
+    <div>
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+
+</form>
+{% endblock %}

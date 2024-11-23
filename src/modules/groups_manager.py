@@ -1,16 +1,35 @@
 from .db import db, User, Group
+from .photo_manager import upload_image
 
 def get_user_groups(user_id: int) -> [Group]:
     user = db.session.query(User).filter(User.id == user_id)
     return user.groups
 
+def get_group(group_id: int) -> Group:
+    group = db.session.query(Group).filter(Group.id == group_id)
+    return group
+
 def get_all_groups() -> [Group]:
     return db.session.query(Group).all()
     
-def create_new_group(creator_id: int, name: str, description: str):
+def create_new_group(
+    creator_id: int,
+    name: str,
+    visibility: bool,
+    description: str,
+    photo = None
+):
     group = Group(owner_id = creator_id)
     group.name = name
-    group.description = description
+    if (description):
+        group.description = description
+    else:
+        group.description = ""
+    if (photo):
+        group.photo_id = upload_image(photo)
+    else:
+        group.photo_id = None 
+    group.visibility = visibility
     db.session.add(group)
     db.session.commit()
 
