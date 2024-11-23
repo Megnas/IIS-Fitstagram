@@ -1,10 +1,10 @@
 
-<div class="post_list_container">
+<div class="gallery_post_list_container">
     <ul>
     {% for post in posts %}
         <li>
             <a href="{{ url_for('post.post', post_id=post.id) }}">
-                <div class="post_list_div">
+                <div class="gallery_post_list_div">
                     <img src="{{ url_for('foto.get_post_image_miniature', post_id=post.id) }}"
                      alt="Post Picture">
                     <p>{{ post.post_date }}</p>
