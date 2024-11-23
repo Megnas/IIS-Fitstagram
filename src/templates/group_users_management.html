@@ -2,16 +2,31 @@
 {% extends "base.html" %}
 
 {% block title %}
-Group users
+Group users management
 {% endblock %}
 
 {% block content %}
-<h1> Group users </h1>
+<h1> Group users management</h1>
 
 <ul>
 <li>{{current_user.name}}{{current_user.unique_id}} (Me)</li>
+{{ csrf }}
 {% for user in group.users %}
-    <li>{{user.name}}{{user.unique_id}}</li>
+    <li>
+        <form
+            method="POST"
+            action="{{ 
+                url_for('groups.group_kick_user',
+                group_id=group.id,
+                user_id=user.id) 
+            }}"
+            enctype="multipart/form-data"
+        >
+        {{user.name}}
+        {{user.unique_id}}
+        <input type="submit" name="kick_user" value="">
+        </form>
+    </li>
 {% endfor %}
 </ul>
 

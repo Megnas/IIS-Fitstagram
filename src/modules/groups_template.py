@@ -21,14 +21,24 @@ class GroupForm(FlaskForm):
     visibility = BooleanField("Public")
     submit = SubmitField("Save changes")
     
-@bp.route("/group_users/<int:group_id>")
+class InviteUserForm(FlaskForm):
+    pass
+
+@bp.route("/group_kick_user/<int:group_id>/<int:user_id>, methods=['POST']")
+@login_required
+def group_kick_user(group_id, user_id):
+    remove_user_from_group(group_id=group_id, user_id=user_id)
+
+    
+@bp.route("/group_users/<int:group_id>", methods=['GET'])
 def group_users(group_id):
     group = get_group(group_id=group_id)       
     owner = get_group_owner(group_id=group_id)
 
     if (current_user.is_authenticated):
         if (current_user.id == group.owner_id or
-            current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN
+            current_user.role == Roles.MODERATOR or
+             current_user.role == Roles.ADMIN
         ):
             return render_template("group_users_management.html", group=group)
         if ( user_is_member(user_id=current_user.id, group_id=group.id)):
