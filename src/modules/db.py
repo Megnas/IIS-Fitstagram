@@ -63,7 +63,7 @@ class Post(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[str] = mapped_column(db.String(256))
     post_date: Mapped[str] = mapped_column(db.DateTime, nullable=False)
-    photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id))
+    photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id), nullable=False)
     visibility: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
     tags = db.relationship("Tag", secondary=post_tag, back_populates="posts")
     groups = db.relationship("Group", secondary=group_post, back_populates="posts")
