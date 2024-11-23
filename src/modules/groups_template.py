@@ -5,7 +5,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, BooleanField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length
-from .groups_manager import create_new_group, get_all_groups, get_group
+from .groups_manager import create_new_group, get_user_accesible_groups, get_group
 from . import groups_manager
 
 bp = Blueprint("groups", __name__)
@@ -23,11 +23,8 @@ class GroupForm(FlaskForm):
 @bp.route("/groups", methods=['GET'])
 @login_required
 def groups():
-    try:
-        groups = get_all_groups()        
-    except Exception as e:
-        flash("Could not get all groups", "danger")
-        print("get_all_groups() failed")
+    groups = get_user_accesible_groups(current_user.id)       
+
     return render_template("groups.html", groups=groups)
 
 @bp.route("/edit_group/<int:group_id>", methods=['GET', 'POST'])
@@ -72,18 +69,18 @@ def create_group():
     user = current_user
     
     if form.validate_on_submit():
-        try:
+        #try:
             create_new_group(
                 user.id,
                 form.name.data,
                 form.visibility.data,
-                form.photo.data,
-                form.description.data
+                form.description.data,
+                form.photo.data
             )
             return redirect(url_for("groups.groups"))
-        except Exception as e:
-            flash("Could not create group", "danger")
-            print(f"Could not create group {e}")
+        #except Exception as e:
+            #flash("Could not create group", "danger")
+            #print(f"Could not create group {e}")
             
     if form.errors:
         flash(f"{form.errors}", "danger")
