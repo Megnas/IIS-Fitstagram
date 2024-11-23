@@ -11,6 +11,10 @@ def create_user(username: str, pwd: str, mail: str, uid: str) -> User:
     db.session.commit()
     return new_user
 
+def get_users(users: [str]):
+    users = db.session.query(User).filter(User.unique_id.in_(users)).all()
+    return users
+
 def update_user(user: User, username=None , email=None, pwd=None, pfp=None, uid=None):
     if pfp:
         image_id = upload_image_to_webg_resized(pfp, quality=90)

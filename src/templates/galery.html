@@ -1,0 +1,32 @@
+<!-- templates/galery.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Galery
+{% endblock %}
+
+{% block content %}
+    <h2>Galery</h2>
+    <form method="GET" action="{{ url_for('view.galery') }}">
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.tags.label }}: {{ form.tags(value=request.args.get('tags', '')) }}
+        </div>
+        <div>
+            {{ form.users.label }}: {{ form.users(value=request.args.get('users', '')) }}
+        </div>
+        <div>
+            {{ form.start_date.label }}: {{ form.start_date(value=request.args.get('start_date', '')) }}
+        </div>
+        <div>
+            {{ form.end_date.label }}: {{ form.end_date(value=request.args.get('end_date', '')) }}
+        </div>
+        <div>
+            {{ form.order_by.label }}: {{ form.order_by(value=request.args.get('order_by', '')) }}
+        </div>
+        <div>
+            {{ form.submit() }}
+        </div>
+    </form>
+   {% include "gallery_posts.html" %}
+{% endblock %}
