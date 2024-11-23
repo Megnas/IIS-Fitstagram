@@ -6,15 +6,20 @@ Post
 {% endblock %}
 
 {% block content %}
-<div>
-    <img src="{{ url_for('foto.get_post_image', post_id=post.id) }}" alt="user image">
-    <a href="{{ url_for('view.profile', user_id=p_user.id) }}"><p>By: {{ p_user.username }} ({{ p_user.unique_id }})</p></a>
-    <p>Date: {{ post.post_date }}</p>
-    <p>Description: {{ post.description }}</p>
-    <p>
-    {% for tag in post.tags %}
-        <a href="{{ url_for('view.tag', tag=tag.name) }}">#{{ tag.name }}</a>
-    {% endfor %}
-    </p>
+<div class="post_view_page_container">
+    <div class="post_view_container">
+        <a href="{{ url_for('view.profile', user_id=p_user.id) }}" class="post_view_container_user">
+            <img src="{{ url_for('foto.get_user_image', user_id=p_user.id) }}" alt="user image">
+            <p>By: {{ p_user.username }} ({{ p_user.unique_id }})</p>
+        </a>
+        <img src="{{ url_for('foto.get_post_image', post_id=post.id) }}" alt="user image" class="post_view_container_img">
+        <p>Date: {{ post.post_date }}</p>
+        <p>Description: {{ post.description }}</p>
+        <p>
+        {% for tag in post.tags %}
+            <a href="{{ url_for('view.tag', tag=tag.name) }}">#{{ tag.name }}</a>
+        {% endfor %}
+        </p>
+    </div>
 </div>
 {% endblock %}

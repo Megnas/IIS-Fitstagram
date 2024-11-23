@@ -11,14 +11,14 @@ Home Page
     <ul>
     {% for post in posts %}
         <li>
-            <div>
-                <a href="{{ url_for('post.post', post_id=post.id) }}">
+            <a href="{{ url_for('post.post', post_id=post.id) }}">
+                <div>
                     <img src="{{ url_for('foto.get_post_image_miniature', post_id=post.id) }}"
                      alt="Post Picture"
                      style="width: 150px; height: 150px;">
                     <p>{{ post.post_date }}</p>
-                </a>
-            </div>
+                </div>
+            </a>
         </li>
       {% endfor %}
     </ul>
