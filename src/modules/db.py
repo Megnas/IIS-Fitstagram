@@ -54,13 +54,17 @@ class Group(db.Model):
     visibility: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
     users = db.relationship("User", secondary=user_group, back_populates="groups")
     posts = db.relationship("Post", secondary=group_post, back_populates="groups")
+
+    def __str__(self):
+        return self.name
     
 post_tag = db.Table("post_tag",
     db.Column("post_id", db.Integer, db.ForeignKey("post.id"), primary_key=True),
-    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id", primary_key=True)))
+    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True))
 
 class Post(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
+    owner_id: Mapped[int] = mapped_column(ForeignKey(User.id), nullable=False)
     description: Mapped[str] = mapped_column(db.String(256))
     post_date: Mapped[str] = mapped_column(db.DateTime, nullable=False)
     photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id), nullable=False)

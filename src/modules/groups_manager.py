@@ -39,6 +39,18 @@ def get_user_accesible_groups(user_id: int) -> [Group]:
     ).order_by(Group.name.asc()).all()
     return groups
 
+def get_user_member_groups(user_id: int) -> [Group]:
+    # If user is admin or moderator just return all the groups
+    user = db.session.query(User).filter(User.id == user_id).first()
+    # Returns all the groups the user owns, is a member of or are public
+    groups = db.session.query(Group).filter( 
+        or_(
+            Group.owner_id == user_id,
+            Group.users.any(User.id == user_id)
+        )
+    ).order_by(Group.name.asc()).all()
+    return groups
+
 def get_user_groups(user_id: int) -> [Group]:
     user = db.session.query(User).filter(
         User.id == user_id

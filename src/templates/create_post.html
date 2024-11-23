@@ -1,0 +1,80 @@
+<!-- templates/login.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<h1>Create Post</h1>
+    <!-- Flash message for success or errors -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+    <ul>
+        {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endwith %}
+
+<!-- Profile Form -->
+<form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+
+    <div class="form-group">
+        {{ form.post_photo.label }}
+        {{ form.post_photo() }}
+    </div>
+
+    <div class="form-group">
+        {{ form.description.label }}
+        {{ form.description() }}
+    </div>
+
+    <div class="form-group">
+        {{ form.tags.label }}
+        {{ form.tags() }}
+    </div>
+
+    <div class="form-group" id="group-field">
+        {{ form.groups.label }}
+        {{ form.groups() }}
+    </div>
+
+    <div class="form-group">
+        {{ form.visibility.label }}
+        {{ form.visibility() }} <!-- Visibility toggle checkbox -->
+    </div>
+
+    <div class="form-group" id="user-field">
+        {{ form.user.label }}
+        {{ form.user() }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<script>
+    // JavaScript to handle showing or hiding the user field based on visibility checkbox
+    document.addEventListener('DOMContentLoaded', function () {
+        const visibilityCheckbox = document.querySelector('[name="visibility"]');
+        const userField = document.getElementById('user-field');
+
+        // Function to toggle user field visibility
+        function toggleUserField() {
+            if (visibilityCheckbox.checked) {
+                userField.style.display = 'none';  // Hide user field if visibility is true
+            } else {
+                userField.style.display = 'block';  // Show user field if visibility is false
+            }
+        }
+
+        // Initial check on page load
+        toggleUserField();
+
+        // Listen for changes to the visibility checkbox
+        visibilityCheckbox.addEventListener('change', toggleUserField);
+    });
+</script>
+{% endblock %}

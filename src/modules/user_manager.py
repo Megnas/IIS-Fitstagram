@@ -72,6 +72,10 @@ def get_user(user_id: int) -> User:
     user = db.session.query(User).filter(User.id == user_id).first()
     return user
 
+def get_user_from_uid(uid: str) -> User:
+    user = db.session.query(User).filter(User.unique_id == uid).first()
+    return user
+
 def update_pfp(user_id: int, filename: string):
     user = db.session.query(User).filter(User.id == user_id).first()
     user.avatar_path = filename
