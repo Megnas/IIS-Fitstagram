@@ -1,13 +1,12 @@
 
-<div class="index_post_container">
+<div class="post_list_container">
     <ul>
     {% for post in posts %}
         <li>
             <a href="{{ url_for('post.post', post_id=post.id) }}">
-                <div>
+                <div class="post_list_div">
                     <img src="{{ url_for('foto.get_post_image_miniature', post_id=post.id) }}"
-                     alt="Post Picture"
-                     style="width: 150px; height: 150px;">
+                     alt="Post Picture">
                     <p>{{ post.post_date }}</p>
                 </div>
             </a>
