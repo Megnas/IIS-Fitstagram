@@ -196,7 +196,7 @@ body {
 
 .post_list_container ul{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-auto-flow: row dense;
     grid-gap: 1em;
     list-style: none;
