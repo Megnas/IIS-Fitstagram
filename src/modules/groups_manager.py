@@ -2,6 +2,9 @@ from .db import db, User, Group
 from .photo_manager import upload_image
 from sqlalchemy import or_ 
 
+def get_all_groups() -> [Group]:
+    return db.session.query(Group).order_by(Group.name.asc()).all()
+
 def user_is_member(user_id: int, group_id: int) -> bool:
     user = db.session.query(User).filter(User.id == user_id)
     group = db.session.query(Group).filter(Group.id == group_id).first()
@@ -10,10 +13,16 @@ def user_is_member(user_id: int, group_id: int) -> bool:
     return False
 
 def get_user_owned_groups(user_id: int) -> [Group]:
-    groups = db.session.query(Group).filter(Group.owner_id == user_id).all()
+    groups = db.session.query(Group).filter(
+        Group.owner_id == user_id
+    ).order_by(Group.name.asc()).all()
     return groups
 
-def get_user_accesible_groups(user_id: int):
+def get_user_accesible_groups(user_id: int) -> [Group]:
+    # If user is admin or moderator just return all the groups
+    user = db.session.query(User).filter(User.id == user_id).first()
+    if (user.role >= Roles.moderator):
+        return get_all_groups()
     # Returns all the groups the user owns, is a member of or are public
     groups = db.session.query(Group).filter( 
         or_(
@@ -21,19 +30,18 @@ def get_user_accesible_groups(user_id: int):
             Group.visibility == True,
             Group.users.any(User.id == user_id)
         )
-    ).all()
+    ).order_by(Group.name.asc()).all()
     return groups
 
 def get_user_groups(user_id: int) -> [Group]:
-    user = db.session.query(User).filter(User.id == user_id).all()
+    user = db.session.query(User).filter(
+        User.id == user_id
+    ).order_by(Group.name.asc()).all()
     return user.groups
 
 def get_group(group_id: int) -> Group:
     group = db.session.query(Group).filter(Group.id == group_id).first()
     return group
-
-def get_all_groups() -> [Group]:
-    return db.session.query(Group).all()
     
 def create_new_group(
     creator_id: int,

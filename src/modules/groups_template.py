@@ -1,11 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from . import groups_manager
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, BooleanField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length
-from .groups_manager import create_new_group, get_user_accesible_groups, get_group
+from .groups_manager import create_new_group, get_user_accesible_groups, get_group, get_user_owned_groups
 from . import groups_manager
 
 bp = Blueprint("groups", __name__)
@@ -20,11 +20,16 @@ class GroupForm(FlaskForm):
     visibility = BooleanField("Public")
     submit = SubmitField("Save changes")
 
+@bp.route("/owned_groups", methods=['GET'])
+@login_required
+def owned_groups():
+    groups = get_user_owned_groups(current_user.id)       
+    return render_template("owned_groups.html", groups=groups)
+
 @bp.route("/groups", methods=['GET'])
 @login_required
 def groups():
     groups = get_user_accesible_groups(current_user.id)       
-
     return render_template("groups.html", groups=groups)
 
 @bp.route("/edit_group/<int:group_id>", methods=['GET', 'POST'])
@@ -47,7 +52,7 @@ def edit_group(group_id):
                 description = form.description.data,
                 photo = form.photo.data
             )
-            return redirect(url_for("groups.groups"))
+            return redirect(url_for("groups.owned_groups"))
         except Exception as e:
             flash("Could not create group", "danger")
             print(f"Could not create group {e}")
@@ -69,18 +74,18 @@ def create_group():
     user = current_user
     
     if form.validate_on_submit():
-        #try:
+        try:
             create_new_group(
-                user.id,
-                form.name.data,
-                form.visibility.data,
-                form.description.data,
-                form.photo.data
+                creator_id = user.id,
+                name = form.name.data,
+                visibility = form.visibility.data,
+                description = form.description.data,
+                photo = form.photo.data
             )
-            return redirect(url_for("groups.groups"))
-        #except Exception as e:
-            #flash("Could not create group", "danger")
-            #print(f"Could not create group {e}")
+            return redirect(url_for("groups.owned_groups"))
+        except Exception as e:
+            flash("Could not create group", "danger")
+            print(f"Could not create group {e}")
             
     if form.errors:
         flash(f"{form.errors}", "danger")
