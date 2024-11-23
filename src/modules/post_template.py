@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, redirect, url_for
+from flask import Blueprint, render_template, flash, redirect, url_for, abort
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import login_required, current_user
@@ -7,9 +7,11 @@ from wtforms.validators import DataRequired, Email, Length, Regexp
 from wtforms_alchemy import QuerySelectMultipleField
 from .groups_manager import get_user_member_groups
 from .tag_manager import get_valid_tag
-from .user_manager import get_user_from_uid
-from .post_manager import create_new_post
+from .user_manager import get_user_from_uid, get_user
+from .post_manager import create_new_post, get_post_by_id, can_see_post
 from wtforms import widgets
+
+from .db import Post
 
 bp = Blueprint('post', __name__)
 
@@ -82,3 +84,16 @@ def create_post():
             return render_template('create_post.html', form=form)
 
     return render_template('create_post.html', form=form)
+
+@bp.route("/post/<int:post_id>")
+def post(post_id):
+    post: Post = get_post_by_id(post_id)
+    if(post):
+        if not post.visibility:
+            if not current_user.is_authenticated:
+                abort(401, description="Not authorized!")
+            if not can_see_post(current_user, post):
+                abort(401, description="Not authorized!")
+        return render_template("post.html", post=post, p_user=get_user(post.owner_id))
+    else:
+        abort(404, description="User does not exists.")

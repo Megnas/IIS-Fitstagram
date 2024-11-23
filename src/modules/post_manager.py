@@ -23,3 +23,17 @@ def create_new_post(user_id: int, post_image, post_decs: str, post_tags: list[Ta
     db.session.commit()
 
     return post
+
+def get_post_by_id(post_id: int) -> Post:
+    post = db.session.query(Post).filter(Post.id == post_id).first()
+    return post
+
+def can_see_post(user: User, post: Post) -> bool:
+    if post.visibility:
+        return True
+    if user.id == post.owner_id or user.id in post.users:
+        return True
+    for group in post.groups:
+        if user.id == group.owner_id or user.id in group.users:
+            return True
+    return False

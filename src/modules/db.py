@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import ForeignKey, Column
+from sqlalchemy import ForeignKey, Column, PrimaryKeyConstraint
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from flask_login import UserMixin
 from enum import Enum
@@ -22,12 +22,14 @@ class Photo(db.Model):
     mimetype: Mapped[str] = mapped_column(db.String(128), nullable=False)  # MIME type (e.g., image/jpeg)
 
 user_group = db.Table("user_group",
-    db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id", primary_key=True)))
+    db.Column("group_id", db.Integer, db.ForeignKey("group.id")),
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
+    PrimaryKeyConstraint('group_id', 'user_id'))
 
 user_post = db.Table("user_post",
-    db.Column("post_id", db.Integer, db.ForeignKey("post.id"), primary_key=True),
-    db.Column("user_id", db.Integer, db.ForeignKey("user.id", primary_key=True)))
+    db.Column("post_id", db.Integer, db.ForeignKey("post.id")),
+    db.Column("user_id", db.Integer, db.ForeignKey("user.id")),
+    PrimaryKeyConstraint('post_id', 'user_id'))
 
 class User(db.Model, UserMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -42,8 +44,9 @@ class User(db.Model, UserMixin):
     posts = db.relationship("Post", secondary=user_post, back_populates="users")
 
 group_post = db.Table("group_post",
-    db.Column("group_id", db.Integer, db.ForeignKey("group.id"), primary_key=True),
-    db.Column("post_id", db.Integer, db.ForeignKey("post.id", primary_key=True)))
+    db.Column("group_id", db.Integer, db.ForeignKey("group.id")),
+    db.Column("post_id", db.Integer, db.ForeignKey("post.id")),
+    PrimaryKeyConstraint('group_id', 'post_id'))
 
 class Group(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -59,8 +62,9 @@ class Group(db.Model):
         return self.name
     
 post_tag = db.Table("post_tag",
-    db.Column("post_id", db.Integer, db.ForeignKey("post.id"), primary_key=True),
-    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id"), primary_key=True))
+    db.Column("post_id", db.Integer, db.ForeignKey("post.id")),
+    db.Column("tag_id", db.Integer, db.ForeignKey("tag.id")),
+    PrimaryKeyConstraint('post_id', 'tag_id'))
 
 class Post(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
