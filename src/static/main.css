@@ -225,11 +225,16 @@ body {
     border: 0.2em solid #AAA;
 }
 
+.scroll_view_div_padding{
+    padding-bottom: 1em;
+}
+
 
 /* Post View */
 
 .post_view_page_container{
-    width: 60em;
+    min-width: 50em;
+    width: 45%;
     padding-left: 1em;
     padding-right: 1em;
     margin:auto;
