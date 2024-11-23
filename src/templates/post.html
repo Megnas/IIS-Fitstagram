@@ -37,7 +37,29 @@ Post
         </form>
 
         <p>Like Statatus {{ score }}</p>
+
+        <form method="POST" action="{{ url_for('post.post', post_id=post.id) }}">
+            {{ comment.hidden_tag() }}
+            
+            <div>
+              <label for="description">Comment:</label>
+              {{ comment.description(size=50) }}
+            </div>
+        
+            <div>
+              {{ comment.submit() }}
+            </div>
+          </form>
         {%endif %}
+        <ul>
+            {% for com in comments %}
+              <li>
+                <p>ID: {{ com.id }}</p>
+                <h3>User: {{ get_user(com.user_id).username }} ({{ get_user(com.user_id).unique_id }})</h3>
+                <span>{{ com.content }}</span>
+            </li>
+            {% endfor %}
+          </ul>
     </div>
 </div>
 {% endblock %}

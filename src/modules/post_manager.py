@@ -1,4 +1,4 @@
-from .db import db, Post, Tag, Group, User, user_group, Score
+from .db import db, Post, Tag, Group, User, user_group, Score, Comment
 from datetime import datetime
 from .photo_manager import upload_image_to_webg, upload_image_to_webg_resized
 from sqlalchemy import or_, and_
@@ -86,6 +86,16 @@ def get_post_score(post: Post):
         return 0, None
     else:
         return score, ((score / total) + 1) / 2
+
+def create_comment(post: Post, user: User, message: str) -> Comment:
+    comment: Comment = Comment(post_id=post.id, user_id=user.id, content=message, timestamp=datetime.now())
+    db.session.add(comment)
+    db.session.commit()
+    return comment
+
+def get_comments(post: Post) -> [Comment]:
+    comments: Comment = db.session.query(Comment).filter(Comment.post_id == post.id).all()
+    return comments
 
 def get_accessible_posts(user: User, page: int = 1, per_page: int = 50):
     if not user.is_authenticated:

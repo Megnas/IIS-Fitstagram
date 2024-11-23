@@ -8,7 +8,7 @@ from wtforms_alchemy import QuerySelectMultipleField
 from .groups_manager import get_user_member_groups
 from .tag_manager import get_valid_tag
 from .user_manager import get_user_from_uid, get_user
-from .post_manager import create_new_post, get_post_by_id, can_see_post, get_like_status, change_like_status, get_post_score
+from .post_manager import create_new_post, get_post_by_id, can_see_post, get_like_status, change_like_status, get_post_score, create_comment, get_comments
 from wtforms import widgets
 
 from .db import Post
@@ -39,6 +39,10 @@ class PostLike(FlaskForm):
 
 class PostDislike(FlaskForm):
     submit = SubmitField('Dislike')
+
+class CreateComment(FlaskForm):
+    description = StringField('Comment', validators=[Length(min=1, max=256)])
+    submit = SubmitField('Create Comment')
 
 @bp.route('/create_post', methods=['GET', 'POST'])
 @login_required
@@ -106,16 +110,23 @@ def post(post_id):
     
     like = None
     dislike = None
+    comment=None
     score = None
     score_val, score_per = get_post_score(post)
     if current_user.is_authenticated:
 
         like = PostLike()
         dislike = PostDislike()
+        comment = CreateComment()
 
         score = get_like_status(post, current_user)
 
-    return render_template("post.html", post=post, p_user=get_user(post.owner_id), like_form=like, dislike_form=dislike, score=score, score_total=score_val, score_per=score_per)
+        if comment.validate_on_submit():
+            create_comment(post, current_user, comment.description.data)
+
+    comments = get_comments(post)
+
+    return render_template("post.html", post=post, p_user=get_user(post.owner_id), like_form=like, dislike_form=dislike, score=score, score_total=score_val, score_per=score_per, comment=comment, comments=comments)
 
 @bp.route('/like/<int:post_id>', methods=['POST'])
 @login_required
