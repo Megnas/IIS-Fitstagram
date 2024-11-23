@@ -1,4 +1,4 @@
-from .db import db, User, Group
+from .db import db, User, Group, Roles
 from .photo_manager import upload_image
 from sqlalchemy import or_ 
 
@@ -6,7 +6,7 @@ def get_all_groups() -> [Group]:
     return db.session.query(Group).order_by(Group.name.asc()).all()
 
 def user_is_member(user_id: int, group_id: int) -> bool:
-    user = db.session.query(User).filter(User.id == user_id)
+    user = db.session.query(User).filter(User.id == user_id).first()
     group = db.session.query(Group).filter(Group.id == group_id).first()
     if (user.id == group.owner_id or user.id in group.users):
         return True
@@ -18,10 +18,16 @@ def get_user_owned_groups(user_id: int) -> [Group]:
     ).order_by(Group.name.asc()).all()
     return groups
 
+def get_public_groups() -> [Group]:
+    groups = db.session.query(Group).filter( 
+        Group.visibility == True,
+    ).order_by(Group.name.asc()).all()
+    return groups
+
 def get_user_accesible_groups(user_id: int) -> [Group]:
     # If user is admin or moderator just return all the groups
     user = db.session.query(User).filter(User.id == user_id).first()
-    if (user.role >= Roles.moderator):
+    if (user.role == Roles.MODERATOR or user.role == Roles.ADMIN):
         return get_all_groups()
     # Returns all the groups the user owns, is a member of or are public
     groups = db.session.query(Group).filter( 

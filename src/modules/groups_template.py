@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 from . import groups_manager
+from .db import Roles
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, BooleanField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length
-from .groups_manager import create_new_group, get_user_accesible_groups, get_group, get_user_owned_groups
+from .groups_manager import create_new_group, get_user_accesible_groups, get_group, get_user_owned_groups, get_public_groups, user_is_member
 from . import groups_manager
 
 bp = Blueprint("groups", __name__)
@@ -19,7 +20,7 @@ class GroupForm(FlaskForm):
     )
     visibility = BooleanField("Public")
     submit = SubmitField("Save changes")
-
+    
 @bp.route("/owned_groups", methods=['GET'])
 @login_required
 def owned_groups():
@@ -27,10 +28,31 @@ def owned_groups():
     return render_template("owned_groups.html", groups=groups)
 
 @bp.route("/groups", methods=['GET'])
-@login_required
 def groups():
-    groups = get_user_accesible_groups(current_user.id)       
+    if (current_user.is_authenticated):
+        groups = get_user_accesible_groups(current_user.id)       
+    else:
+        groups = get_public_groups()
     return render_template("groups.html", groups=groups)
+
+@bp.route("/group_homepage/<int:group_id>", methods=['GET'])
+def group_homepage(group_id):
+    group = get_group(group_id=group_id)       
+
+
+    if (current_user.is_authenticated):
+        if (current_user.id == group.owner_id or
+            current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN
+        ):
+            return render_template("group_homepage.html", group=group, owner=True)
+        if ( user_is_member(user_id=current_user.id, group_id=group.id)):
+            return render_template("group_homepage.html", group=group, owner=False)
+
+    if (group.visibility):
+        return render_template("group_homepage.html", group=group, owner=False)
+
+    return abort(401, "User does not have acces to this group")
+            
 
 @bp.route("/edit_group/<int:group_id>", methods=['GET', 'POST'])
 @login_required

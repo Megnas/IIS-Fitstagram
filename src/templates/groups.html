@@ -11,7 +11,9 @@ Groups
 {% for group in groups %}
 <li>
     <h3>
+    <a href="{{ url_for('groups.group_homepage', group_id=group.id) }}">
         {{ group.name}}
+    </a>
     </h3>
     <p>{{group.description}}</p>
     <img src = "{{ url_for('foto.get_group_image', group_id=group.id) }}"

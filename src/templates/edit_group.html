@@ -1,4 +1,4 @@
-<!-- templates/groups.html -->
+<!-- templates/group_detail.html -->
 {% extends "base.html" %}
 
 {% block title %}
@@ -7,6 +7,7 @@ Edit group
 
 {% block content %}
 <h1> Edit group </h1>
+{% if current_user.id == group.owner_id %}
 <form 
     method="POST" 
     action="{{ url_for('groups.edit_group', group_id=group.id) }}" 
@@ -40,4 +41,5 @@ Edit group
     </div>
 
 </form>
+{% endif %}
 {% endblock %}

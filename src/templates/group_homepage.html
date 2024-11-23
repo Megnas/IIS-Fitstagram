@@ -1,0 +1,16 @@
+<!-- templates/group_detail.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Group homepage
+{% endblock %}
+
+{% block content %}
+<h1> {{group.name}}</h1>
+{% if owner %}
+<a href="{{ url_for('groups.edit_group', group_id=group.id)}}">
+    Edit group
+</a>
+{% endif %}
+
+{% endblock %}
