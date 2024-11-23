@@ -9,20 +9,22 @@ Groups
 <h1> Groups </h1>
 {% include "owned_groups.html" %}
 
-<div id="visible_groups" class="group_div">
+<div id="visible_groups" class="group_list_div">
     <h2> Visible groups </h2>
     <ul>
     {% for group in groups %}
     <li>
-        <h3>
         <a href="{{ url_for('groups.group_homepage', group_id=group.id) }}">
-            {{ group.name}}
+            <div class="group_list_item">
+                <img src = "{{ url_for('foto.get_group_image', group_id=group.id) }}"
+                    alt="Group Image"
+                    style="width: 150px; height: 150px; border-radius: 50%;">
+                <h3>
+                    {{ group.name }}
+                </h3>
+                <p>{{group.description}}</p>
+            </div>
         </a>
-        </h3>
-        <p>{{group.description}}</p>
-        <img src = "{{ url_for('foto.get_group_image', group_id=group.id) }}"
-            alt="Group Image"
-            style="width: 150px; height: 150px; border-radius: 50%;">
     </li>
     {% endfor %}
     </ul>
