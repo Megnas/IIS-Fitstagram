@@ -40,7 +40,7 @@ def can_see_post(user: User, post: Post) -> bool:
             return True
     return False
 
-def get_accessible_posts(user: User):
+def get_accessible_posts(user: User, page: int = 1, per_page: int = 50):
     if not user.is_authenticated:
         # Return only public posts for unauthenticated users
         return (
@@ -71,7 +71,11 @@ def get_accessible_posts(user: User):
             )
         )
         .order_by(Post.post_date.desc())  # Order by post_date in descending order
-        .all()
+        .paginate(page=page, per_page=per_page)
     )
 
-    return accessible_posts
+    posts = accessible_posts.items  # Current page's posts
+    total = accessible_posts.total  # Total number of posts
+    pages = accessible_posts.pages  # Total number of pages
+
+    return posts, total, pages

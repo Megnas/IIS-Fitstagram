@@ -21,7 +21,7 @@ class SettingsForm(FlaskForm):
         Regexp(r'^[a-z0-9_]+$', message="UID must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.")
     ])
     password = PasswordField('New Password')
-    profile_picture = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
+    profile_picture = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'webp'], 'Images only!')])
     submit = SubmitField('Save Changes')
 
 @bp.route('/settings', methods=['GET', 'POST'])

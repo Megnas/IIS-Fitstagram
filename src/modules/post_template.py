@@ -20,7 +20,7 @@ class QuerySelectMultipleFieldWithCheckboxes(QuerySelectMultipleField):
     option_widget = widgets.CheckboxInput()
 
 class PostForm(FlaskForm):
-    post_photo = FileField('Picture', validators=[DataRequired(), FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
+    post_photo = FileField('Picture', validators=[DataRequired(), FileAllowed(['jpg', 'jpeg', 'png', 'webp'], 'Images only!')])
     description = StringField('Description', validators=[Length(min=0, max=256)])
     tags = StringField('Tags', validators=[ 
         Length(min=0, max=512), 
