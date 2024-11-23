@@ -50,7 +50,7 @@ class Group(db.Model):
     name: Mapped[str] = mapped_column(db.String(64), nullable=False)
     owner_id: Mapped[int] = mapped_column(ForeignKey(User.id))
     description: Mapped[str] = mapped_column(db.String(256), nullable=False)
-    photo_id: Mapped[int] = mapped_column(ForeignKey(Photo.id))
+    photo_id: Mapped[int] = mapped_column(ForeignKey(Photo.id), nullable=True)
     visibility: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
     users = db.relationship("User", secondary=user_group, back_populates="groups")
     posts = db.relationship("Post", secondary=group_post, back_populates="groups")
