@@ -22,6 +22,22 @@ Post
             <a href="{{ url_for('view.tag', tag=tag.name) }}">#{{ tag.name }}</a>
         {% endfor %}
         </p>
+        <p>Score: {{ score_total }} ({{ score_per }})</p>
+        {%if user.is_authenticated %}
+        <!-- Like Form -->
+        <form method="POST" action="{{ url_for('post.like', post_id=post.id) }}">
+            {{ like_form.csrf_token }}
+            {{ like_form.submit(class="btn btn-success") }}
+        </form>
+        
+        <!-- Dislike Form -->
+        <form method="POST" action="{{ url_for('post.dislike', post_id=post.id) }}">
+            {{ dislike_form.csrf_token }}
+            {{ dislike_form.submit(class="btn btn-danger") }}
+        </form>
+
+        <p>Like Statatus {{ score }}</p>
+        {%endif %}
     </div>
 </div>
 {% endblock %}

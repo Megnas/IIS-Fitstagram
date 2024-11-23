@@ -1,7 +1,8 @@
-from .db import db, Post, Tag, Group, User, user_group
+from .db import db, Post, Tag, Group, User, user_group, Score
 from datetime import datetime
 from .photo_manager import upload_image_to_webg, upload_image_to_webg_resized
 from sqlalchemy import or_, and_
+from sqlalchemy import func
 
 def create_new_post(user_id: int, post_image, post_decs: str, post_tags: list[Tag], groups: list[Group], visibility: bool, allow_users: list[User] = None) -> Post:
     image_id = upload_image_to_webg(post_image)
@@ -41,8 +42,50 @@ def can_see_post(user: User, post: Post) -> bool:
     return False
 
 def get_like_status(post: Post, user: User) -> bool:
-    pass
-    #db.session.qu
+    score: Score = db.session.query(Score).filter(and_(Score.post_id == post.id, Score.user_id == user.id)).first()
+    if score:
+        return score.score
+    return None
+
+def change_like_status(post: Post, user: User, score_value: bool) -> Score:
+    print("Enter funcs")
+    score_obj: Score = db.session.query(Score).filter(and_(Score.post_id == post.id, Score.user_id == user.id)).first()
+    if score_obj:
+        if score_obj.score == score_value:
+            db.session.delete(score_obj)
+            db.session.commit()
+            return None
+        else:
+            score_obj.score = not score_obj.score
+            db.session.commit()
+            return score_obj
+    else:
+        score_obj = Score(post_id=post.id, user_id=user.id, score=score_value)
+        db.session.add(score_obj)
+        db.session.commit()
+        return score_obj
+
+
+def get_post_score(post: Post):
+    positive_count = (
+        db.session.query(func.count(Score.score))
+        .filter(Score.post_id == post.id, Score.score == True)
+        .scalar()
+    )
+
+    negative_count = (
+        db.session.query(func.count(Score.score))
+        .filter(Score.post_id == post.id, Score.score == False)
+        .scalar()
+    )
+
+    total = positive_count + negative_count
+    score = positive_count - negative_count
+
+    if total == 0:
+        return 0, None
+    else:
+        return score, ((score / total) + 1) / 2
 
 def get_accessible_posts(user: User, page: int = 1, per_page: int = 50):
     if not user.is_authenticated:

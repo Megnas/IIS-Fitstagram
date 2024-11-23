@@ -8,7 +8,7 @@ from wtforms_alchemy import QuerySelectMultipleField
 from .groups_manager import get_user_member_groups
 from .tag_manager import get_valid_tag
 from .user_manager import get_user_from_uid, get_user
-from .post_manager import create_new_post, get_post_by_id, can_see_post
+from .post_manager import create_new_post, get_post_by_id, can_see_post, get_like_status, change_like_status, get_post_score
 from wtforms import widgets
 
 from .db import Post
@@ -103,11 +103,41 @@ def post(post_id):
             abort(401, description="Not authorized!")
         if not can_see_post(current_user, post):
             abort(401, description="Not authorized!")
-        
-    like = PostLike()
-    dislike = PostDislike()
+    
+    like = None
+    dislike = None
+    score = None
+    score_val, score_per = get_post_score(post)
+    if current_user.is_authenticated:
 
-    return render_template("post.html", post=post, p_user=get_user(post.owner_id), like=like, dislike=dislike)
+        like = PostLike()
+        dislike = PostDislike()
+
+        score = get_like_status(post, current_user)
+
+    return render_template("post.html", post=post, p_user=get_user(post.owner_id), like_form=like, dislike_form=dislike, score=score, score_total=score_val, score_per=score_per)
+
+@bp.route('/like/<int:post_id>', methods=['POST'])
+@login_required
+def like(post_id):
+    post: Post = get_post_by_id(post_id)
+    if not post:
+        abort(404, description="User does not exists.")
+    
+    change_like_status(post, current_user, True)
+
+    return redirect(url_for('post.post', post_id=post_id))
+
+@bp.route('/dislike/<int:post_id>', methods=['POST'])
+@login_required
+def dislike(post_id):
+    post: Post = get_post_by_id(post_id)
+    if not post:
+        abort(404, description="User does not exists.")
+
+    change_like_status(post, current_user, False)
+
+    return redirect(url_for('post.post', post_id=post_id))
 
 @bp.route("/edit_post/<int:post_id>")
 def edit_post(post_id):
