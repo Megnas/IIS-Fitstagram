@@ -120,3 +120,44 @@ def get_accessible_posts_tag(user: User, page: int = 1, per_page: int = 50, tag:
     pages = accessible_posts.pages  # Total number of pages
 
     return posts, total, pages
+
+def get_accessible_posts_user(user: User, page: int = 1, per_page: int = 50, profile_id: int=None):
+    if not user.is_authenticated:
+        accessible_posts = db.session.query(Post).filter(and_(Post.visibility == True, Post.owner_id == profile_id)).order_by(Post.post_date.desc()).paginate(page=page, per_page=per_page)
+
+        posts = accessible_posts.items  # Current page's posts
+        total = accessible_posts.total  # Total number of posts
+        pages = accessible_posts.pages  # Total number of pages
+
+        return posts, total, pages
+
+    # Subquery for groups the user is a member of
+    user_groups_subquery = (
+        db.session.query(Group.id)
+        .join(user_group, user_group.c.group_id == Group.id)
+        .filter(user_group.c.user_id == user.id)
+        .subquery()
+    )
+
+    # Query for posts
+    accessible_posts = (
+        db.session.query(Post)
+        .outerjoin(Post.groups)  # Join the groups associated with the posts
+        .filter(Post.owner_id == profile_id)
+        .filter(
+            or_(
+                Post.owner_id == user.id,  # Posts owned by the user
+                Post.visibility == True,  # Public posts
+                Post.users.any(User.id == user.id),  # Posts explicitly shared with the user
+                Post.groups.any(Group.id.in_(user_groups_subquery))  # Posts shared with user's groups
+            )
+        )
+        .order_by(Post.post_date.desc())  # Order by post_date in descending order
+        .paginate(page=page, per_page=per_page)
+    )
+
+    posts = accessible_posts.items  # Current page's posts
+    total = accessible_posts.total  # Total number of posts
+    pages = accessible_posts.pages  # Total number of pages
+
+    return posts, total, pages

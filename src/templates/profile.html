@@ -9,4 +9,7 @@ Login
 <h1>{{ p_user.username }}</h1>
 <p>{{ p_user.unique_id }}</p>
 <img src="{{ url_for('foto.get_user_image', user_id=p_user.id) }}" alt="user image">
+
+{% include "list_post.html" %}
+
 {% endblock %}
