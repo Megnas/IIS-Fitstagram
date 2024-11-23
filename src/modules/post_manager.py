@@ -40,6 +40,10 @@ def can_see_post(user: User, post: Post) -> bool:
             return True
     return False
 
+def get_like_status(post: Post, user: User) -> bool:
+    pass
+    #db.session.qu
+
 def get_accessible_posts(user: User, page: int = 1, per_page: int = 50):
     if not user.is_authenticated:
         accessible_posts = db.session.query(Post).filter(Post.visibility == True).order_by(Post.post_date.desc()).paginate(page=page, per_page=per_page)

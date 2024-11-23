@@ -72,7 +72,7 @@ def create_new_group(
     visibility: bool,
     description: str,
     photo = None
-):
+) -> Group:
     group = Group(owner_id = creator_id)
     group.name = name
     if (description != None):
@@ -87,6 +87,8 @@ def create_new_group(
     group.visibility = visibility
     db.session.add(group)
     db.session.commit()
+
+    return group
     
 def edit_group(
     group_id: int,

@@ -127,14 +127,14 @@ def create_group():
     
     if form.validate_on_submit():
         try:
-            create_new_group(
+            group = create_new_group(
                 creator_id = user.id,
                 name = form.name.data,
                 visibility = form.visibility.data,
                 description = form.description.data,
                 photo = form.photo.data
             )
-            return redirect(url_for("groups.group_homepage"))
+            return redirect(url_for("groups.group_homepage", group_id=group.id))
         except Exception as e:
             flash("Could not create group", "danger")
             print(f"Could not create group {e}")

@@ -34,6 +34,12 @@ class PostForm(FlaskForm):
     groups = QuerySelectMultipleFieldWithCheckboxes("Groups", query_factory=lambda: get_user_member_groups(current_user.id))
     submit = SubmitField('Post')
 
+class PostLike(FlaskForm):
+    submit = SubmitField('Like')
+
+class PostDislike(FlaskForm):
+    submit = SubmitField('Dislike')
+
 @bp.route('/create_post', methods=['GET', 'POST'])
 @login_required
 def create_post():
@@ -85,18 +91,23 @@ def create_post():
 
     return render_template('create_post.html', form=form)
 
-@bp.route("/post/<int:post_id>")
+@bp.route("/post/<int:post_id>", methods=['GET', 'POST'])
 def post(post_id):
     post: Post = get_post_by_id(post_id)
-    if(post):
-        if not post.visibility:
-            if not current_user.is_authenticated:
-                abort(401, description="Not authorized!")
-            if not can_see_post(current_user, post):
-                abort(401, description="Not authorized!")
-        return render_template("post.html", post=post, p_user=get_user(post.owner_id))
-    else:
+
+    if not post:
         abort(404, description="User does not exists.")
+
+    if not post.visibility:
+        if not current_user.is_authenticated:
+            abort(401, description="Not authorized!")
+        if not can_see_post(current_user, post):
+            abort(401, description="Not authorized!")
+        
+    like = PostLike()
+    dislike = PostDislike()
+
+    return render_template("post.html", post=post, p_user=get_user(post.owner_id), like=like, dislike=dislike)
 
 @bp.route("/edit_post/<int:post_id>")
 def edit_post(post_id):
