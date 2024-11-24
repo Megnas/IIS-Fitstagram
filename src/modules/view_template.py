@@ -85,7 +85,7 @@ class PostFilterUserForm(FlaskForm):
 def index():
     page = request.args.get('page', 1, type=int)
 
-    posts, tototal, pages = get_posts_based_on_filters(current_user, page=page, per_page=(4 * 6))
+    posts, tototal, pages = get_posts_based_on_filters(current_user, page=page, per_page=(4 * 6), order_by='time')
     return render_template("index.html", posts=posts, page=page, pages=pages, self_ref='view.index')
 
 @bp.route("/galery")
