@@ -38,7 +38,7 @@ class User(db.Model, UserMixin):
     unique_id: Mapped[str] = mapped_column(db.String(128), nullable=False, unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(db.String(60))
     role: Mapped[int] = mapped_column(db.Enum(Roles), nullable=False)
-    photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id), nullable=True)
+    photo_id: Mapped[int] = mapped_column(ForeignKey(Photo.id), nullable=True)
     blocked: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
     groups = db.relationship("Group", secondary=user_group, back_populates="users", cascade="all, delete")
     posts = db.relationship("Post", secondary=user_post, back_populates="users", cascade="all, delete")
