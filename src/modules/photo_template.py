@@ -2,7 +2,7 @@ from flask import Blueprint, send_file, abort, render_template
 from flask_login import current_user
 import io
 
-from .db import Post
+from .db import Post, Roles
 
 from .user_manager import get_user
 from .photo_manager import get_pic_by_id
@@ -43,7 +43,7 @@ def get_group_image(group_id):
         if not group.visibility:
             if not current_user.is_authenticated:
                 abort(401, description="Not authorized!")
-            if not (current_user.id == group.owner_id or current_user.id in group.users):
+            if not (current_user.id == group.owner_id or current_user.id in group.users or current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN):
                 abort(401, description="Not authorized!")
 
         if(group.photo_id):

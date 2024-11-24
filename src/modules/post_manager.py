@@ -1,4 +1,4 @@
-from .db import db, Post, Tag, Group, User, user_group, Score, Comment
+from .db import db, Post, Tag, Group, User, user_group, Score, Comment, Roles
 from datetime import datetime
 from .photo_manager import upload_image_to_webg, upload_image_to_webg_resized
 from .user_manager import get_users
@@ -34,6 +34,8 @@ def get_post_by_id(post_id: int) -> Post:
 
 def can_see_post(user: User, post: Post) -> bool:
     if post.visibility:
+        return True
+    if user.role == Roles.MODERATOR or user.role == Roles.ADMIN:
         return True
     if user.id == post.owner_id or user.id in post.users:
         return True
