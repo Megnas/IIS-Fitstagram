@@ -6,7 +6,11 @@ Admin Page
 {% endblock %}
 
 {% block content %}
+<div class="general_view_page_container">
     <h1>Admin Page</h1>
-    <a href="{{ url_for('admin.admin_users') }}">Users</a>
-    <a href="{{ url_for('admin.admin_tags') }}">Tags</a>
+    <div class="admin_selection">
+        <a href="{{ url_for('admin.admin_users') }}">Users</a>
+        <a href="{{ url_for('admin.admin_tags') }}">Tags</a>
+    </div>
+</div>
 {% endblock %}
