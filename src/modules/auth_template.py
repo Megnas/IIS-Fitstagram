@@ -44,6 +44,7 @@ def register():
             #flash('Registration successful! You can now log in.', 'success')
             return redirect(url_for('view.index'))
         except Exception as e:
+            db.session.rollback()
             flash('UID or Email already in use.', 'danger')
             flash('Registration Failed.', 'danger')
 
