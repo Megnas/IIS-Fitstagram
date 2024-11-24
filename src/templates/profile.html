@@ -10,7 +10,7 @@ Login
 <p>{{ p_user.unique_id }}</p>
 <img src="{{ url_for('foto.get_user_image', user_id=p_user.id) }}" alt="user image">
 <h2>User Posts</h2>
-<form method="GET">
+<form method="GET" class="filter_form">
     {{ form.hidden_tag() }}
     <div>
         {{ form.tags.label }}: {{ form.tags(value=request.args.get('tags', '')) }}

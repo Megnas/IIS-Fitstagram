@@ -321,6 +321,21 @@ body {
     margin-left: 2.5%;
 }
 
+.delete_comment_form{
+    margin-left: 2em;
+    align-self: flex-end;
+}
+
+.delete_comment_form button{
+    background-color: white;
+    border:none
+}
+
+.delete_comment_form button:hover{
+    color: #9C1A1C;
+    background-color: white;
+}
+
 .scroll_view_div_margin{
     margin-bottom: 1em;
 }
@@ -461,4 +476,41 @@ body {
 
 .upload_form_like input{
     margin: 0 2.5%
+}
+
+/* filters */
+
+.filter_form{
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 1em;
+    border-bottom: 0.1em solid #AAAAAA;
+    width: 110em;
+}
+
+.filter_form div{
+    flex: 1;
+    font-size: 0.8em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.filter_form div>input{
+    margin-left: 0.4em;
+}
+
+.filter_form div>select{
+    margin-left: 0.4em;
+}
+
+.filter_form input{
+    border: thin solid #AAA;
+    border-radius: 0;
+}
+
+.filter_form select{
+    border: thin solid #AAA;
+    border-radius: 0;
 }

@@ -17,7 +17,7 @@ Group homepage
 </a>
 
 <h2>Group Image board</h2>
-<form method="GET">
+<form method="GET" class="filter_form">
     {{ form.hidden_tag() }}
     <div>
         {{ form.tags.label }}: {{ form.tags(value=request.args.get('tags', '')) }}

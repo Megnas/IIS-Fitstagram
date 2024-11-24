@@ -7,7 +7,7 @@ Galery
 
 {% block content %}
     <h2>Galery</h2>
-    <form method="GET">
+    <form method="GET" class="filter_form">
         {{ form.hidden_tag() }}
         <div>
             {{ form.tags.label }}: {{ form.tags(value=request.args.get('tags', '')) }}

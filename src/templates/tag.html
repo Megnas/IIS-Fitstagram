@@ -7,7 +7,7 @@ Home Page
 
 {% block content %}
     <h2>#{{tag_name}}</h2>
-    <form method="GET">
+    <form method="GET" class="filter_form">
         {{ form.hidden_tag() }}
         <div>
             {{ form.users.label }}: {{ form.users(value=request.args.get('users', '')) }}
