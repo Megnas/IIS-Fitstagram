@@ -45,7 +45,7 @@ class GroupForm(FlaskForm):
     description = StringField("Description", widget=widgets.TextArea())
     photo = FileField(
         "Group Image",
-        validators=[FileAllowed(["jpg", "jpeg", "png"], "Images only!")]
+        validators=[FileAllowed(["jpg", "jpeg", "png", "webp"], "Images only!")]
     )
     visibility = BooleanField("Public")
     submit = SubmitField("Save changes")
