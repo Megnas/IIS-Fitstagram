@@ -27,4 +27,23 @@
             </p>
         </div>
     {% endfor %}
+
+    <!-- Pagination -->
+    <div class="scroll_pagination">
+        {% if pages > 1 %}
+                <!-- Next Page Link -->
+                {% if page < pages %}
+                        <a href="{{ url_for(self_ref, page=page+1) }}">
+                            <div class="scroll_more_btn">
+                                <span>More...</span>
+                            </div>
+                        </a>
+                {% else %}
+                    <div class="disabled"><span>You've viewed everything there is</span></div>
+                {% endif %}
+        {% endif %}
+    </div>
+
 </div>
+
+

@@ -6,6 +6,7 @@ Login
 {% endblock %}
 
 {% block content %}
+<div class="general_view_page_container">
 <h1>Login</h1>
     <!-- Flash message for success or errors -->
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -19,22 +20,23 @@ Login
 {% endwith %}
 
 <!-- Profile Form -->
-<form method="POST" action="{{ url_for('auth.login') }}" enctype="multipart/form-data">
+<form method="POST" action="{{ url_for('auth.login') }}" enctype="multipart/form-data" class="upload_form">
     {{ form.hidden_tag() }}
     
-    <div>
+    <div class="form-group">
         <label for="email">Email</label>
         {{ form.email(class="form-control") }}
     </div>
     
-    <div>
+    <div class="form-group">
         <label for="password">Password</label>
         {{ form.password(class="form-control") }}
     </div>
     
-    <div>
+    <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
     </div>
     <p>Don't have an account? <a href="{{ url_for('auth.register') }}">Register here</a></p>
 </form>
+</div>
 {% endblock %}

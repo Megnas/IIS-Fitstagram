@@ -144,3 +144,10 @@ def create_group():
         flash(f"{form.errors}", "danger")
 
     return render_template("create_group.html", form=form)
+
+
+
+#vypis pozvanek a pozadavku pro joinuti groupy
+#@bp.route("/groups/requests_invites", methods=['GET'])
+#@login_required
+#def group_requests_invites():

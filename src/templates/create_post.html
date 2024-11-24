@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-Login
+Create Post
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,7 @@ Login
         <!-- Flash message for success or errors -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-        <ul>
+        <ul class="err">
             {% for category, message in messages %}
                 <li class="{{ category }}">{{ message }}</li>
             {% endfor %}

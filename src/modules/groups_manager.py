@@ -1,4 +1,4 @@
-from .db import db, User, Group, Roles
+from .db import db, User, Group, Roles, GroupInvite
 from .photo_manager import upload_image_to_webg_resized
 from sqlalchemy import or_ 
 
@@ -154,3 +154,15 @@ def change_group_image(group_id: int, image):
     group = db.session.query(Group).filter(Group.id == group_id).first()
     group.photo_id = photo_id
     db.session.commit()
+
+def get_user_group_invitations(user_id: int):
+    group_invitations = db.session.query(GroupInvite).filter(
+        GroupInvite.user_id == user_id, GroupInvite.user_pending == True
+    ).order_by(GroupInvite.date_created.desc()).all()
+    return group_invitations
+
+def get_group_member_requests(group_id: int):
+    group_invitations = db.session.query(GroupInvite).filter(
+        GroupInvite.group_id == group_id, GroupInvite.group_pending == True
+    ).order_by(GroupInvite.date_created.desc()).all()
+    return group_invitations
