@@ -19,4 +19,4 @@ clean:
 	docker rm "$(DOCKER_NAME)" || true
 
 zip:
-	zip xvacla37.zip *.py modules/*.py templates/*.html requirements.txt doc.html static/* static/images/*
+	zip xvacla37.zip *.py modules/*.py templates/*.html requirements.txt doc.html static/* static/images/* *.svg
