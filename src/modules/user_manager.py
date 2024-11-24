@@ -1,5 +1,5 @@
 import string
-from .db import db, User, Roles
+from .db import db, User, Roles, Group, GroupInvite
 from hashlib import sha224
 
 from .photo_manager import upload_image_to_webg_resized
@@ -13,6 +13,18 @@ def create_user(username: str, pwd: str, mail: str, uid: str) -> User:
 
 def get_users(users: [str]):
     users = db.session.query(User).filter(User.unique_id.in_(users)).all()
+    return users
+
+def get_users_for_invite(group_id: int):
+    group = db.session.query(Group).filter(Group.id == group_id).first()
+    do_not_invite = [group.owner_id] + [user.id for user in group.users]
+    invites = db.session.query(GroupInvite).filter(
+        GroupInvite.group_id == group_id
+    ).all()
+    do_not_invite += [invite.user_id for invite in invites]
+    users = db.session.query(User).filter(
+        User.id.not_in(do_not_invite)
+    ).all()
     return users
 
 def update_user(user: User, username=None , email=None, pwd=None, pfp=None, uid=None):

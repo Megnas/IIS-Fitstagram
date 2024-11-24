@@ -118,11 +118,6 @@ def add_user_to_group(group_id: int, user_id: int):
     group.users.append(user_id)
     db.session.commit()
 
-def invite_user_to_group(group_id: int, user_id: int):
-    group = db.session.query(Group).filter(Group.id == group_id).first()
-    group.invited_users.append(user_id)
-    db.session.commit()
-
 def reject_user_invitation_to_group(group_id: int, user_id: int):
     group = db.session.query(Group).filter(Group.id == group_id).first()
     group.invited_users.remove(user_id)

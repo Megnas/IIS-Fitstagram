@@ -1,4 +1,4 @@
-<!-- templates/group_users.html -->
+<!-- templates/group_users_management.html -->
 {% extends "base.html" %}
 
 {% block title %}
@@ -7,27 +7,84 @@ Group users management
 
 {% block content %}
 <h1> Group users management</h1>
+<form
+    method="POST"
+    action="{{ 
+        url_for(
+        'groups.group_invite_user',
+        group_id=group.id
+        ) 
+    }}"
+    enctype="multipart/form-data"
+>
+{{ invite_user_form.hidden_tag() }}
+{{ invite_user_form.user(class="form-control") }}
+{{ invite_user_form.submit(class="form-control") }}
+</form>
 
+<h2>Group users</h2>
 <ul>
 <li>{{current_user.name}}{{current_user.unique_id}} (Me)</li>
-{{ csrf }}
 {% for user in group.users %}
     <li>
-        <form
-            method="POST"
-            action="{{ 
+        {{user.name}}
+        {{user.unique_id}}
+        <a
+            href="{{ 
                 url_for('groups.group_kick_user',
                 group_id=group.id,
                 user_id=user.id) 
             }}"
-            enctype="multipart/form-data"
-        >
-        {{user.name}}
-        {{user.unique_id}}
-        <input type="submit" name="kick_user" value="Kick">
-        </form>
+        > Kick
+        </a>
     </li>
 {% endfor %}
+</ul>
+
+<h2>Invited users</h2>
+
+<ul>
+    {% for user in user_pending%}
+    <li>
+        {{user.name}}
+        {{user.unique_id}}
+        <a
+            href="{{ 
+                url_for('groups.cancel_invite',
+                group_id=group.id,
+                user_id=user.id) 
+            }}"
+        > Cancel
+        </a>
+    </li>
+    {% endfor %}
+</ul>
+
+<h2>Users requesting to join</h2>
+
+<ul>
+    {% for user in group_pending%}
+    <li>
+        {{user.name}}
+        {{user.unique_id}}
+        <a
+            href="{{ 
+                url_for('groups.approve_join',
+                group_id=group.id,
+                user_id=user.id) 
+            }}"
+        > Approve 
+        </a>
+        <a
+            href="{{ 
+                url_for('groups.reject_join',
+                group_id=group.id,
+                user_id=user.id) 
+            }}"
+        > Reject 
+        </a>
+    </li>
+    {% endfor %}
 </ul>
 
 {% endblock %}

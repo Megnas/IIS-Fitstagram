@@ -1,12 +1,26 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request
 from flask_login import login_required, current_user
 from . import groups_manager
-from .db import Roles
+from .db import Roles, User
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, BooleanField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length
-from .groups_manager import create_new_group, get_user_accesible_groups, get_group, get_user_owned_groups, get_public_groups, user_is_member, get_group_owner
+from .groups_manager import (
+    create_new_group, 
+    get_user_accesible_groups, 
+    get_group, 
+    get_user_owned_groups, 
+    get_public_groups, 
+    user_is_member, 
+    get_group_owner
+)
+from .invites_manager import (
+    get_users_with_group_pending_invites, 
+    get_users_with_user_pending_invites,
+    invite_user_to_group
+)
+from .user_manager import get_users_for_invite
 from . import groups_manager
 from .post_manager import get_accessible_posts_group
 from wtforms import widgets
@@ -23,13 +37,80 @@ class GroupForm(FlaskForm):
     visibility = BooleanField("Public")
     submit = SubmitField("Save changes")
     
-class InviteUserForm(FlaskForm):
-    pass
+def invite_user_form(users, **kwargs):
+    class InviteUserForm(FlaskForm):
+        submit = SubmitField("Invite")
 
-@bp.route("/group_kick_user/<int:group_id>/<int:user_id>, methods=['POST']")
+    field = SelectField(
+        "User",
+        choices=[(user.id, user.unique_id) for user in users]
+        )
+    setattr(InviteUserForm, "user", field)
+
+    return InviteUserForm()
+
+@bp.route("/group_invite_user/<int:group_id>", methods=['POST'])
+@login_required
+def group_invite_user(group_id):
+    group = get_group(group_id)
+    if (group == None):
+        return abort(404, "Could not find group")
+    if (group.owner_id != current_user.id):
+        return abort(401, "User does not have acces to this group")
+    
+    print(get_users_for_invite(group_id=group_id))
+    form = invite_user_form(get_users_for_invite(group_id=group_id))
+
+    if form.validate_on_submit():
+        print(form.user.data)
+        invite_user_to_group(group_id=group_id, user_id=form.user.data)
+            
+    if form.errors:
+        flash("Could not invite user", "warn")
+
+    return redirect(url_for("groups.group_users", group_id=group_id))
+
+@bp.route("/group_cancel_invite/<int:group_id>/<int:user_id>", methods=['GET'])
+@login_required
+def cancel_invite(group_id, user_id):
+    group = get_group(group_id)
+    if (group == None):
+        return abort(404, "Could not find group")
+    if (group.owner_id != current_user.id):
+        return abort(401, "User does not have acces to this group")
+    return redirect(url_for("groups.group_users", group_id=group_id))
+
+@bp.route("/group_approve_user/<int:group_id>/<int:user_id>", methods=['GET'])
+@login_required
+def approve_join(group_id, user_id):
+    group = get_group(group_id)
+    if (group == None):
+        return abort(404, "Could not find group")
+    if (group.owner_id != current_user.id):
+        return abort(401, "User does not have acces to this group")
+    return redirect(url_for("groups.group_users", group_id=group_id))
+
+@bp.route("/group_reject_user/<int:group_id>/<int:user_id>", methods=['GET'])
+@login_required
+def reject_join(group_id, user_id):
+    group = get_group(group_id)
+    if (group == None):
+        return abort(404, "Could not find group")
+    if (group.owner_id != current_user.id):
+        return abort(401, "User does not have acces to this group")
+    return redirect(url_for("groups.group_users", group_id=group_id))
+
+@bp.route("/group_kick_user/<int:group_id>/<int:user_id>", methods=['GET'])
 @login_required
 def group_kick_user(group_id, user_id):
+    group = get_group(group_id)
+    if (group == None):
+        return abort(404, "Could not find group")
+    if (group.owner_id != current_user.id):
+        return abort(401, "User does not have acces to this group")
+
     remove_user_from_group(group_id=group_id, user_id=user_id)
+    return redirect(url_for("groups.group_users", group_id=group_id))
 
     
 @bp.route("/group_users/<int:group_id>", methods=['GET'])
@@ -42,12 +123,26 @@ def group_users(group_id):
             current_user.role == Roles.MODERATOR or
              current_user.role == Roles.ADMIN
         ):
-            return render_template("group_users_management.html", group=group)
+            return render_template(
+                "group_users_management.html", 
+                group=group,
+                user_pending=get_users_with_user_pending_invites(group_id=group_id),
+                group_pending=get_users_with_group_pending_invites(group_id=group_id),
+                invite_user_form=invite_user_form(get_users_for_invite(group_id=group_id))
+            )
         if ( user_is_member(user_id=current_user.id, group_id=group.id)):
-            return render_template("group_users.html", group=group, owner=owner)
+            return render_template(
+                "group_users.html", 
+                group=group, 
+                owner=owner
+            )
 
     if (group.visibility):
-        return render_template("group_users.html", group=group, owner=owner)
+        return render_template(
+            "group_users.html", 
+            group=group, 
+            owner=owner
+        )
 
     return abort(401, "User does not have acces to this group")
 
@@ -69,18 +164,46 @@ def group_homepage(group_id):
         return abort(404, "Could not find group")
 
     page = request.args.get('page', 1, type=int)
-    posts, tototal, pages = get_accessible_posts_group(current_user, page=page, per_page=(4 * 6), group_id=group.id)
+    posts, tototal, pages = get_accessible_posts_group(
+        current_user,
+        page=page, 
+        per_page=(4 * 6), 
+        group_id=group.id
+    )
 
     if (current_user.is_authenticated):
         if (current_user.id == group.owner_id or
             current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN
         ):
-            return render_template("group_homepage.html", group=group, owner=True, posts=posts, page=page, pages=pages)
+            return render_template(
+                "group_homepage.html",
+                group=group, owner=True,
+                posts=posts,
+                page=page,
+                pages=pages,
+                self_ref="groups.group_homepage"
+            )
         if ( user_is_member(user_id=current_user.id, group_id=group.id)):
-            return render_template("group_homepage.html", group=group, owner=False, posts=posts, page=page, pages=pages)
+            return render_template(
+                "group_homepage.html", 
+                group=group, 
+                owner=False, 
+                posts=posts, 
+                page=page, 
+                pages=pages,
+                self_ref="groups.group_homepage"
+            )
 
     if (group.visibility):
-        return render_template("group_homepage.html", group=group, owner=False, posts=posts, page=page, pages=pages)
+        return render_template(
+            "group_homepage.html",
+            group=group,
+            owner=False, 
+            posts=posts, 
+            page=page, 
+            pages=pages,
+            self_ref="groups.group_homepage"
+        )
 
     return abort(401, "User does not have acces to this group")
             
@@ -150,4 +273,4 @@ def create_group():
 #vypis pozvanek a pozadavku pro joinuti groupy
 #@bp.route("/groups/requests_invites", methods=['GET'])
 #@login_required
-#def group_requests_invites():
+#def requests_invites():
