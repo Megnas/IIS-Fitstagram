@@ -10,6 +10,8 @@ from .tag_manager import get_valid_tag
 from .user_manager import get_user_from_uid, get_user
 from .post_manager import create_new_post, get_post_by_id, can_see_post, get_like_status, change_like_status, get_post_score, create_comment, get_comments, get_comment
 from .post_manager import delete_comment as delete_comment_from_db
+from .post_manager import delete_post as delete_post_from_db
+from .post_manager import edit_post as edit_post_in_db
 from wtforms import widgets
 
 
@@ -180,10 +182,89 @@ def delete_post(post_id):
     if not (post.owner_id == current_user.id or current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN):
         abort(401, description="You dont have permissions")
 
-    #TODO: Delete post
+    delete_post_from_db(post)
 
-    return redirect(url_for('post.post', post_id=post_id))
+    return redirect(url_for('view.galery'))
 
-@bp.route("/edit_post/<int:post_id>")
+class PostEditForm(FlaskForm):
+    description = StringField('Description', validators=[Length(min=0, max=256)], widget=widgets.TextArea())
+    tags = StringField('Tags', validators=[ 
+        Length(min=0, max=512), 
+        Regexp(r'^[a-z0-9_ ]*$', message="Tags must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.")
+    ])
+    visibility = BooleanField('Public', default=True)  # Add visibility toggle
+    user = StringField('User UIDs', validators=[ 
+        Length(min=0, max=512), 
+        Regexp(r'^[a-z0-9_ ]*$', message="User IDs must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.")
+    ])
+    groups = QuerySelectMultipleFieldWithCheckboxes("Groups", query_factory=lambda: get_user_member_groups(current_user.id))
+    submit = SubmitField('Save')
+
+@bp.route("/edit_post/<int:post_id>", methods=['GET', 'POST'])
 def edit_post(post_id):
-    abort(404, description="Post does not exists.")
+    post: Post = get_post_by_id(post_id)
+    if not post:
+        abort(404, description="Post does not exists.")
+
+    if not (post.owner_id == current_user.id):
+        abort(401, description="You dont have permissions")
+
+    form = PostEditForm()
+
+    if form.validate_on_submit():
+        #Tags
+        tag_tokens = form.tags.data.split()
+        new_tags = []
+        for tag in tag_tokens:
+            new_tag = get_valid_tag(tag)
+            if new_tag:
+                new_tags.append(new_tag)
+            else:
+                flash(f'Invalid tag: {tag}', 'danger')
+                return render_template("edit_post.html", form=form, post=post)
+            
+        #Public and users
+        new_users = []
+        if not form.visibility.data:
+            user_tokens = form.user.data.split()
+            for user in user_tokens:
+                usr = get_user_from_uid(user)
+                if usr:
+                    if usr.id == current_user.id:
+                        flash('Cannot add your self to list', 'danger')
+                        return render_template('edit_post.html', form=form, post=post)
+                    new_users.append(usr)
+                else:
+                    flash(f'Invalid user uid: {user}', 'danger')
+                    return render_template('edit_post.html', form=form, post=post)
+        try:
+            edit_post_in_db(post=post, description=form.description.data, tags=new_tags, groups=form.groups.data, visibiliy=form.visibility.data, users=new_users)
+            flash(f'Post updated', 'info')
+        except:
+            flash(f'Post updated failed', 'warn')
+        return render_template("edit_post.html", form=form, post=post)
+
+    if form.tags.errors:
+        flash(f'Invalid tag format (only user lower character of numbers)', 'danger')
+        return render_template("edit_post.html", form=form, post=post)
+    
+    if form.user.errors:
+        flash(f'Invalid user format (only user lower character of numbers)', 'danger')
+        return render_template("edit_post.html", form=form, post=post)
+
+    #load form with data
+    form.description.data = post.description
+    form.visibility.data = post.visibility
+    form.groups.data = post.groups
+
+    form.tags.data = ""
+    for tag in post.tags:
+        form.tags.data += tag.name
+        form.tags.data += " " 
+
+    form.user.data = ""
+    for user in post.users:
+        form.user.data += user.unique_id
+        form.user.data += " " 
+
+    return render_template("edit_post.html", form=form, post=post)

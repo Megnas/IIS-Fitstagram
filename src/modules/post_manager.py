@@ -106,6 +106,23 @@ def delete_comment(comment: Comment):
     db.session.delete(comment)
     db.session.commit()
 
+def delete_post(post: Post):
+    comments: [Comment] = get_comments(post)
+    for comment in comments:
+        db.session.delete(comment)
+    db.session.delete(post)
+    db.session.commit()
+
+def edit_post(post: Post, description: str, tags: [Tag], groups: [Group], visibiliy: bool, users: [User]):
+    print("Desc: ", description)
+    post.description = description
+    post.groups = groups
+    post.tags = tags
+    post.visibility = visibiliy
+    post.users = users
+    db.session.commit()
+
+
 def get_tokens(data):
     tokens = data.split()
     positive = []

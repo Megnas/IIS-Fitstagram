@@ -7,24 +7,26 @@ Edit group
 
 {% block content %}
 <h1> Edit group </h1>
-{% if current_user.id == group.owner_id %}
+{% if current_user.id == group.owner_id or current_user_is_moderator%}
+<div class="general_view_page_container">
 <form 
     method="POST" 
     action="{{ url_for('groups.edit_group', group_id=group.id) }}" 
     enctype="multipart/form-data"
+    class="upload_form"
 >
     {{ form.hidden_tag() }}
-    <div>
+    <div class="form-group">
         <label for="name">Name</label>
         {{ form.name(class="form-control") }}
     </div>
 
-    <div>
+    <div class="form-group upload_form_desc">
         <label for="description">Description</label>
         {{ form.description(class="form-control") }}
     </div>
 
-    <div>
+    <div class="form-group upload_form_picture">
         <img src = "{{ url_for('foto.get_group_image', group_id=group.id) }}"
         alt="Group Image"
         style="width: 150px; height: 150px; border-radius: 50%;">
@@ -32,14 +34,15 @@ Edit group
         {{ form.photo(class="form-control") }}
     </div>
 
-    <div>
+    <div class="form-group">
         <label for="public">Public</label>
         {{ form.visibility(class="form-control") }}
     </div>
-    <div>
+    <div class="form-group">
         {{ form.submit(class="btn btn-primary") }}
     </div>
 
 </form>
+</div>
 {% endif %}
 {% endblock %}
