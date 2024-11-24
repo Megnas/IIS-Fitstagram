@@ -297,6 +297,7 @@ def group_homepage(group_id):
     
     form.order_by.data = order_by
 
+    invite = None
     if (current_user.is_authenticated):
         invite = get_invite(
                 user_id=current_user.id, 

@@ -35,6 +35,9 @@ def get_users_with_user_pending_invites(group_id: int) -> [GroupInvite]:
 def invite_user_to_group(group_id: int, user_id: int):
     group = db.session.query(Group).filter(Group.id == group_id).first()
     user = db.session.query(User).filter(User.id == user_id).first()
+
+    if (user in group.users):
+        return 
     
     invite = db.session.query(GroupInvite).filter(
         and_(
@@ -58,6 +61,9 @@ def invite_user_to_group(group_id: int, user_id: int):
 def request_group_join(group_id: int, user_id: int):
     group = db.session.query(Group).filter(Group.id == group_id).first()
     user = db.session.query(User).filter(User.id == user_id).first()
+    
+    if (user in group.users):
+        return 
     
     invite = db.session.query(GroupInvite).filter(
         and_(
@@ -110,6 +116,9 @@ def approve_group_invite(user_id: int, group_id: int):
     group = db.session.query(Group).filter(
         Group.id == group_id
     ).first()
+
+    if (user in group.users):
+        return None
     
     group.users.append(user)
 
