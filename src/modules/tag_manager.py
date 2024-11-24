@@ -9,6 +9,12 @@ def get_similar_tags(patern: str) -> [Tag]:
 
     return results
 
+def is_tag_banner(tag: str) -> bool:
+    tag: Tag = db.session.query(Tag).filter(Tag.name == tag).first()
+    if tag:
+        return tag.blocked
+    return False
+
 def get_valid_tag_id(tag_name: str) -> int:
     tag: Tag = db.session.query(Tag).filter(Tag.name == tag_name).first()
     if(tag):

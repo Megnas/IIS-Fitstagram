@@ -81,7 +81,7 @@ def admin_settings(user_id):
             flash('Your settings have been updated!', 'success')
         except:
             flash('Your settings have not been updated!', 'danger')
-        return redirect(url_for('settings.settings'))
+        return redirect(url_for('admin.admin_settings', user_id=user.id))
 
     if form.unique_id.errors:
         flash("User ID must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.", 'danger')

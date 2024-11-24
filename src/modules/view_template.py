@@ -26,6 +26,8 @@ from .invites_manager import (
     invite_user_to_group,
 )
 
+from .tag_manager import is_tag_banner
+
 from wtforms.validators import DataRequired, Email, Length, Regexp
 from wtforms.validators import Length, Optional
 from flask_wtf import FlaskForm
@@ -116,6 +118,10 @@ def galery():
 def tag():
     page = request.args.get('page', 1, type=int)
     tag = request.args.get('tag', None, type=str)
+
+    if is_tag_banner(tag):
+        abort(404, "Tag is blocked!")
+
     form = PostFilterForm()
 
     tags = request.args.get('tags', None ,type=str)
