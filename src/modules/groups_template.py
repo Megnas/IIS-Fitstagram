@@ -7,13 +7,13 @@ from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, BooleanField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Length
 from .groups_manager import (
-    create_new_group, 
-    get_user_accesible_groups, 
-    get_group, 
-    get_user_owned_groups, 
-    get_public_groups, 
-    user_is_member, 
-    get_group_owner
+    create_new_group,
+    get_user_accesible_groups,
+    get_group,
+    get_user_owned_groups,
+    get_public_groups,
+    user_is_member,
+    get_group_owner, get_user_member_groups
 )
 from .invites_manager import (
     get_users_with_group_pending_invites, 
@@ -183,10 +183,11 @@ def groups():
     if (current_user.is_authenticated):
         groups = get_user_accesible_groups(current_user.id)       
         owned_groups = get_user_owned_groups(current_user.id)
+        member_groups = get_user_member_groups(current_user.id)
     else:
         groups = get_public_groups()
         owned_groups = None
-    return render_template("groups.html", groups=groups, owned_groups = owned_groups)
+    return render_template("groups.html", groups=groups, owned_groups = owned_groups, member_groups = member_groups)
 
 class PostFilterForm(FlaskForm):
     tags = StringField('Tags', validators=[ 

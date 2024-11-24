@@ -37,7 +37,7 @@ Groups
 <div id="member_group" class="group_list_div">
     <h2> Joined groups </h2>
     <ul>
-    {% for group in groups %}
+    {% for group in member_groups %}
     <li>
         <a href="{{ url_for('groups.group_homepage', group_id=group.id) }}">
             <div class="group_list_item">
