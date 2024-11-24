@@ -18,7 +18,17 @@ Group users management
     enctype="multipart/form-data"
 >
 {{ invite_user_form.hidden_tag() }}
-{{ invite_user_form.user(class="form-control") }}
+<label for="user">User uid:</label>
+<input
+        list="suggestions"
+        id="user"
+        name="user"
+        value="{{ invite_user_form.user.data or '' }}">
+<datalist id="suggestions">
+    {% for value in invite_user_form.allowed_values %}
+        <option value="{{ value }}">
+    {% endfor %}
+</datalist>
 {{ invite_user_form.submit(class="form-control") }}
 </form>
 

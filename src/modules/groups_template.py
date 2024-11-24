@@ -18,9 +18,10 @@ from .groups_manager import (
 from .invites_manager import (
     get_users_with_group_pending_invites, 
     get_users_with_user_pending_invites,
-    invite_user_to_group
+    invite_user_to_group,
+    cancel_group_invite
 )
-from .user_manager import get_users_for_invite
+from .user_manager import get_users_for_invite, get_user_from_uid
 from . import groups_manager
 from .post_manager import get_accessible_posts_group
 from wtforms import widgets
@@ -39,14 +40,18 @@ class GroupForm(FlaskForm):
     
 def invite_user_form(users, **kwargs):
     class InviteUserForm(FlaskForm):
+        user = StringField(
+            "User",
+            validators=[DataRequired()]
+            )
         submit = SubmitField("Invite")
+        
+        def validate_input_field(form, field):
+            if (field.data) not in form.allowed_values:
+                raise ValidationError("Invalid input, please choose from the suggestions")
 
-    field = SelectField(
-        "User",
-        choices=[(user.id, user.unique_id) for user in users]
-        )
-    setattr(InviteUserForm, "user", field)
-
+    allowed_values = [user.unique_id for user in users]
+    setattr(InviteUserForm, "allowed_values", allowed_values)
     return InviteUserForm()
 
 @bp.route("/group_invite_user/<int:group_id>", methods=['POST'])
@@ -58,12 +63,18 @@ def group_invite_user(group_id):
     if (group.owner_id != current_user.id):
         return abort(401, "User does not have acces to this group")
     
-    print(get_users_for_invite(group_id=group_id))
     form = invite_user_form(get_users_for_invite(group_id=group_id))
 
     if form.validate_on_submit():
-        print(form.user.data)
-        invite_user_to_group(group_id=group_id, user_id=form.user.data)
+        user = get_user_from_uid(form.user.data)
+        if (user != None):
+            invite_user_to_group(group_id=group_id, user_id=user.id)
+        else:
+            flash("User does not exist", "warn")
+
+    if not form.is_submitted:
+        form.user.data = ""
+            
             
     if form.errors:
         flash("Could not invite user", "warn")
@@ -78,7 +89,20 @@ def cancel_invite(group_id, user_id):
         return abort(404, "Could not find group")
     if (group.owner_id != current_user.id):
         return abort(401, "User does not have acces to this group")
+    
+    cancel_group_invite(group_id=group_id, user_id=user_id)
+
     return redirect(url_for("groups.group_users", group_id=group_id))
+
+@bp.route("/group_request_join/<int:group_id>", methods=['GET'])
+@login_required
+def request_join(group_id, user_id):
+    group = get_group(group_id)
+    if (group == None):
+        return abort(404, "Could not find group")
+    
+
+    return redirect(url_for("groups.group_homepage", group_id=group_id))
 
 @bp.route("/group_approve_user/<int:group_id>/<int:user_id>", methods=['GET'])
 @login_required
@@ -123,12 +147,15 @@ def group_users(group_id):
             current_user.role == Roles.MODERATOR or
              current_user.role == Roles.ADMIN
         ):
+            form = invite_user_form(get_users_for_invite(group_id=group_id))
+            if not form.is_submitted:
+                form.user.data = ""
             return render_template(
                 "group_users_management.html", 
                 group=group,
                 user_pending=get_users_with_user_pending_invites(group_id=group_id),
                 group_pending=get_users_with_group_pending_invites(group_id=group_id),
-                invite_user_form=invite_user_form(get_users_for_invite(group_id=group_id))
+                invite_user_form=form
             )
         if ( user_is_member(user_id=current_user.id, group_id=group.id)):
             return render_template(

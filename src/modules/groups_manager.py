@@ -118,17 +118,6 @@ def add_user_to_group(group_id: int, user_id: int):
     group.users.append(user_id)
     db.session.commit()
 
-def reject_user_invitation_to_group(group_id: int, user_id: int):
-    group = db.session.query(Group).filter(Group.id == group_id).first()
-    group.invited_users.remove(user_id)
-    db.session.commit()
-
-def approve_invitation_to_group(group_id: int, user_id: int):
-    group = db.session.query(Group).filter(Group.id == group_id).first()
-    group.invited_users.remove(user_id)
-    group.users.append(user_id)
-    db.session.commit()
-
 def remove_user_from_group(group_id: int, user_id: int):
     group = db.session.query(Group).filter(Group.id == group_id).first()
     group.users.remove(user_id)
@@ -149,15 +138,3 @@ def change_group_image(group_id: int, image):
     group = db.session.query(Group).filter(Group.id == group_id).first()
     group.photo_id = photo_id
     db.session.commit()
-
-def get_user_group_invitations(user_id: int):
-    group_invitations = db.session.query(GroupInvite).filter(
-        GroupInvite.user_id == user_id, GroupInvite.user_pending == True
-    ).order_by(GroupInvite.date_created.desc()).all()
-    return group_invitations
-
-def get_group_member_requests(group_id: int):
-    group_invitations = db.session.query(GroupInvite).filter(
-        GroupInvite.group_id == group_id, GroupInvite.group_pending == True
-    ).order_by(GroupInvite.date_created.desc()).all()
-    return group_invitations
