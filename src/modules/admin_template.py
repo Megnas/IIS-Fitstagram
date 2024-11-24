@@ -7,6 +7,7 @@ from flask_wtf.file import FileField, FileAllowed
 from flask_wtf import FlaskForm
 
 from .user_manager import update_user
+from .user_manager import create_user as register_new_user
 
 from .db import Roles, User, db, Tag
 
@@ -116,3 +117,45 @@ def admin_block_tag(tag_id):
     tag.blocked = not tag.blocked
     db.session.commit()
     return redirect(url_for('admin.admin_tags'))
+
+class RegisterForm(FlaskForm):
+    email = StringField('Email', validators=[
+        DataRequired(), 
+        Email(), 
+        Length(min=5, max=128)
+    ])
+    unique_id = StringField('UID', validators=[
+        DataRequired(), 
+        Length(min=5, max=128), 
+        Regexp(r'^[a-z0-9_]+$', message="UID must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.")
+    ])
+    username = StringField('Username', validators=[
+        DataRequired(), 
+        Length(min=3, max=32)
+    ])
+    password = PasswordField('New Password')
+    submit = SubmitField('Register')
+
+@bp.route('/admin/create_user', methods=['GET', 'POST'])
+def create_user():
+    if not(current_user.role == Roles.ADMIN):
+        abort(401, description="Not allowed")
+
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        try:
+            user = register_new_user(username=form.username.data, pwd=form.password.data, mail=form.email.data, uid=form.unique_id.data)
+            flash('User creation succesful', 'danger')
+            return redirect(url_for('admin.create_user'))
+        except Exception as e:
+            flash('Registration Failed.', 'danger')
+            print("Registration failed!", e)
+
+    if form.unique_id.errors:
+        flash("User ID must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.", 'danger')
+
+    if form.email.errors:
+        flash("Email format invalid", 'danger')
+
+    return render_template('admin_create_user.html', form=form)

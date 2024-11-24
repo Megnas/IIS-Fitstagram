@@ -8,6 +8,9 @@ Admin Page
 {% block content %}
 
 {% if current_user_is_admin() %}
+
+<a href="{{ url_for('admin.create_user') }}">Create New User</a>
+
 <h2>Moderators</h2>
 <ul>
     {% for user in moderators %}

@@ -7,10 +7,22 @@ import os
 from .db import db
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, Length, Regexp
+from wtforms.validators import ValidationError
 
 from .user_manager import update_user
 
 bp = Blueprint('settings', __name__)
+
+# Custom validator for max file size
+def FileMaxSize(max_size):
+    def _file_max_size(form, field):
+        if field.data:
+            # Get the size of the uploaded file
+            file_size = len(field.data.read())
+            field.data.seek(0)  # Rewind the file pointer after reading it
+            if file_size > max_size:
+                raise ValidationError(f"File size must not exceed {max_size / 1024 / 1024} MB")
+    return _file_max_size
 
 class SettingsForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=3, max=32)])
@@ -21,7 +33,7 @@ class SettingsForm(FlaskForm):
         Regexp(r'^[a-z0-9_]+$', message="UID must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.")
     ])
     password = PasswordField('New Password')
-    profile_picture = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'webp'], 'Images only!')])
+    profile_picture = FileField('Profile Picture', validators=[FileAllowed(['jpg', 'jpeg', 'png', 'webp'], 'Images only!'), FileMaxSize(5 * 1024 * 1024)])
     submit = SubmitField('Save Changes')
 
 @bp.route('/settings', methods=['GET', 'POST'])

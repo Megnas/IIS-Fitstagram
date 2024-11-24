@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, flash, redirect, url_for, abort
+from flask import Blueprint, render_template, flash, redirect, url_for, abort, request
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import login_required, current_user
@@ -13,18 +13,29 @@ from .post_manager import delete_comment as delete_comment_from_db
 from .post_manager import delete_post as delete_post_from_db
 from .post_manager import edit_post as edit_post_in_db
 from wtforms import widgets
-
+from wtforms.validators import ValidationError
 
 from .db import Post, Comment, Roles
 
 bp = Blueprint('post', __name__)
+
+# Custom validator for max file size
+def FileMaxSize(max_size):
+    def _file_max_size(form, field):
+        if field.data:
+            # Get the size of the uploaded file
+            file_size = len(field.data.read())
+            field.data.seek(0)  # Rewind the file pointer after reading it
+            if file_size > max_size:
+                raise ValidationError(f"File size must not exceed {max_size / 1024 / 1024} MB")
+    return _file_max_size
 
 class QuerySelectMultipleFieldWithCheckboxes(QuerySelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)
     option_widget = widgets.CheckboxInput()
 
 class PostForm(FlaskForm):
-    post_photo = FileField('Picture', validators=[DataRequired(), FileAllowed(['jpg', 'jpeg', 'png', 'webp'], 'Images only!')])
+    post_photo = FileField('Picture', validators=[DataRequired(), FileAllowed(['jpg', 'jpeg', 'png', 'webp'], 'Images only!'), FileMaxSize(5 * 1024 * 1024)])
     description = StringField('Description', validators=[Length(min=0, max=256)], widget=widgets.TextArea())
     tags = StringField('Tags', validators=[ 
         Length(min=0, max=512), 
@@ -96,6 +107,13 @@ def create_post():
         except:
             flash(f'Failed to create Post', 'danger')
             return render_template('create_post.html', form=form)
+        
+    else:
+        # Form is invalid, check errors
+        if request.method == 'POST':
+            for field, errors in form.errors.items():
+                for error in errors:
+                    flash(f"Error in field {field}: {error}", 'error')
 
     return render_template('create_post.html', form=form)
 
@@ -251,6 +269,7 @@ def edit_post(post_id):
     if form.user.errors:
         flash(f'Invalid user format (only user lower character of numbers)', 'danger')
         return render_template("edit_post.html", form=form, post=post)
+
 
     #load form with data
     form.description.data = post.description
