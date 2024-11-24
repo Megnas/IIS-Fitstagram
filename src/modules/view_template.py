@@ -105,7 +105,7 @@ def galery():
     elif order_by == 'comments':
         query = query.outerjoin(Comment).group_by(Post.id).order_by(db.func.count(Comment.id).desc())
 
-    pagination = query.paginate(page=page, per_page=10)
+    pagination = query.paginate(page=page, per_page=24)
 
     posts = pagination.items  # Current page's posts
     total = pagination.total  # Total number of posts

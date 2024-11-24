@@ -57,7 +57,12 @@ def utility_functions():
     #retuns user object from id
     def get_user(usr_id: int):
         return um.get_user(usr_id)
-    return dict(get_user=get_user)
+    def modify_query_params(**kwargs):
+        """Helper function to modify query parameters dynamically."""
+        args = request.args.to_dict()  # Get current query parameters
+        args.update(kwargs)  # Update with new parameters
+        return f"{request.path}?{'&'.join([f'{k}={v}' for k, v in args.items()])}"
+    return dict(get_user=get_user, modify_query_params=modify_query_params)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
