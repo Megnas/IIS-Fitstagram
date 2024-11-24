@@ -43,7 +43,7 @@ def get_group_image(group_id):
         if not group.visibility:
             if not current_user.is_authenticated:
                 abort(401, description="Not authorized!")
-            if not (current_user.id == group.owner_id or current_user.id in group.users or current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN):
+            if not (current_user.id == group.owner_id or current_user in group.users or current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN):
                 abort(401, description="Not authorized!")
 
         if(group.photo_id):
