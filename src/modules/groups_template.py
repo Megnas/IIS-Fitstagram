@@ -219,10 +219,7 @@ def group_users(group_id):
     owner = get_group_owner(group_id=group_id)
 
     if (current_user.is_authenticated):
-        if (current_user.id == group.owner_id or
-            current_user.role == Roles.MODERATOR or
-             current_user.role == Roles.ADMIN
-        ):
+        if (current_user.id == group.owner_id):
             form = invite_user_form(get_users_for_invite(group_id=group_id))
             if not form.is_submitted:
                 form.user.data = ""
@@ -377,10 +374,11 @@ def edit_group(group_id):
                 description = form.description.data,
                 photo = form.photo.data
             )
-            return redirect(url_for("groups.owned_groups"))
+            return redirect(url_for("groups.group_homepage", group_id=group_id))
         except Exception as e:
-            flash("Could not create group", "danger")
+            flash("Could not edit group", "danger")
             print(f"Could not create group {e}")
+        return redirect(url_for("groups.group_homepage", group_id=group_id))
             
     if form.errors:
         flash(f"{form.errors}", "danger")
