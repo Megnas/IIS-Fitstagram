@@ -58,11 +58,11 @@ def utility_functions():
     def get_user(usr_id: int):
         return um.get_user(usr_id)
     def current_user_is_moderator():
-        if not current_user.is_authenticated():
+        if not current_user.is_authenticated:
             return False
         return current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN
     def current_user_is_admin():
-        if not current_user.is_authenticated():
+        if not current_user.is_authenticated:
             return False
         return current_user.role == Roles.ADMIN
     def modify_query_params(**kwargs):
