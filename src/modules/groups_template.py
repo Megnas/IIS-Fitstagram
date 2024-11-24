@@ -242,7 +242,13 @@ def groups():
     else:
         groups = get_public_groups()
         owned_groups = None
-    return render_template("groups.html", groups=groups, owned_groups = owned_groups, member_groups = member_groups)
+        member_groups = None
+    return render_template(
+        "groups.html",
+        groups=groups,
+        owned_groups = owned_groups,
+        member_groups = member_groups
+        )
 
 class PostFilterForm(FlaskForm):
     tags = StringField('Tags', validators=[ 

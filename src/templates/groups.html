@@ -34,6 +34,7 @@ Groups
 
 
 
+{% if member_groups %}
 <div id="member_group" class="group_list_div">
     <h2> Joined groups </h2>
     <ul>
@@ -55,7 +56,9 @@ Groups
     </ul>
 </div>
 {% endif %}
+{% endif %}
 
+{% if groups %}
 <div id="public_group" class="group_list_div">
     <h2> Public groups </h2>
     <ul>
@@ -76,4 +79,5 @@ Groups
     {% endfor %}
     </ul>
 </div>
+{% endif %}
 {% endblock %}
