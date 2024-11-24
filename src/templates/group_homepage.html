@@ -30,7 +30,8 @@ Group homepage
             {% if invite.user_pending %}
                 <a href="{{
                     url_for('groups.accept_invite',
-                    group_id=group.id
+                    group_id=group.id,
+                    redir='groups.group_homepage'
                     )
                 }}"> Accept invitation</a>
                 <a href="{{

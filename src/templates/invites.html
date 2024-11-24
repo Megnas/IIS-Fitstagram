@@ -1,0 +1,47 @@
+<!-- templates/invites.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Invites and Requests
+{% endblock %}
+
+{% block content %}
+<h2>Invites</h2>
+
+<ul>
+{% for invite in invites %}
+    <li>
+    {{invite.name}}
+    <a href="{{ url_for(
+        'invites.accept_invite',
+        group_id=invite.id
+    )}}">
+        Accept
+    </a>
+    <a href="{{ url_for(
+        'invites.cancel_invite',
+        group_id=invite.id
+    )}}">
+       Decline 
+    </a>
+    </li>
+{% endfor %}
+</ul>
+
+<h2>Requests</h2>
+
+<ul>
+{% for request in requests %}
+    <li>
+    {{request.name}}
+    <a href="{{ url_for(
+        'invites.cancel_invite',
+        group_id=request.id
+    )}}">
+       Cancel
+    </a>
+    </li>
+{% endfor %}
+</ul>
+
+{% endblock %}

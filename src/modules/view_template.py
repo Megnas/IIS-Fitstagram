@@ -21,6 +21,7 @@ from .groups_manager import (
     get_user_owned_groups,
     get_user_member_groups,
     get_user_invited_groups,
+    get_user_requested_groups,
 )
 from .invites_manager import (
     invite_user_to_group,
@@ -175,7 +176,8 @@ def profile(user_id):
                 group in
                 get_user_owned_groups(current_user.id) if 
                 group not in get_user_member_groups(user_id) and
-                group not in get_user_invited_groups(user_id)]
+                group not in get_user_invited_groups(user_id) and
+                group not in get_user_requested_groups(user_id)]
             if (len(choices) != 0):
                 invite_form = user_invite_form(
                     choices=choices

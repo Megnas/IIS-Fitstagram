@@ -1,6 +1,7 @@
 from .db import db, User, Group, Roles, GroupInvite
 from .photo_manager import upload_image_to_webg_resized
-from sqlalchemy import or_ 
+from sqlalchemy import or_, and_ 
+from .invites_manager import get_user_group_invitations
 
 def get_all_groups() -> [Group]:
     return db.session.query(Group).order_by(Group.name.asc()).all()
@@ -18,15 +19,28 @@ def user_is_member(user_id: int, group_id: int) -> bool:
     return False
 
 def get_user_invited_groups(user_id: int) -> [Group]:
+    invites = get_user_group_invitations(user_id=user_id)
+    group_ids = [invite.group_id for invite in invites]
+    groups = db.session.query(Group).filter(
+        and_(
+            Group.id.in_(group_ids),
+            GroupInvite.user_pending == True
+        )
+    )
+    return groups
+
+def get_user_requested_groups(user_id: int) -> [Group]:
     invites = db.session.query(GroupInvite).filter(
-        GroupInvite.user_id == user_id
+        and_(
+        GroupInvite.user_id == user_id,
+        GroupInvite.group_pending == True
+        )
     ).all()
     group_ids = [invite.group_id for invite in invites]
     groups = db.session.query(Group).filter(
         Group.id.in_(group_ids)
     )
     return groups
-
 
 def get_user_owned_groups(user_id: int) -> [Group]:
     groups = db.session.query(Group).filter(
@@ -170,3 +184,27 @@ def change_group_image(group_id: int, image):
     group = db.session.query(Group).filter(Group.id == group_id).first()
     group.photo_id = photo_id
     db.session.commit()
+
+def get_group_invite_group_pairs(user_id: int):
+    results = db.session.query(GroupInvite, Group).join(
+        Group,
+        GroupInvite.group_id == Group.id
+        ).filter(
+            and_(
+                GroupInvite.user_id == user_id,
+                GroupInvite.user_pending == True
+            )
+        )
+    return results
+
+def get_group_request_group_pairs(user_id: int):
+    results = db.session.query(GroupInvite, Group).join(
+        Group,
+        GroupInvite.group_id == Group.id
+        ).filter(
+            and_(
+                GroupInvite.user_id == user_id,
+                GroupInvite.group_pending == True
+            )
+        )
+    return results

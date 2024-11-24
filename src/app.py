@@ -52,7 +52,17 @@ with  app.app_context():
     db.create_all()
     init_login_manager(app)
 
-from modules import auth_template, view_template, settings_template, groups_template, photo_template, post_template, search_template, admin_template
+from modules import (
+    auth_template, 
+    view_template, 
+    settings_template, 
+    groups_template, 
+    photo_template, 
+    post_template, 
+    search_template, 
+    admin_template,
+    invites_template,
+)
 app.register_blueprint(auth_template.bp)
 app.register_blueprint(photo_template.bp)
 app.register_blueprint(view_template.bp)
@@ -61,6 +71,7 @@ app.register_blueprint(groups_template.bp)
 app.register_blueprint(post_template.bp)
 app.register_blueprint(search_template.bp)
 app.register_blueprint(admin_template.bp)
+app.register_blueprint(invites_template.bp)
 
 @app.context_processor
 def inject_user():
