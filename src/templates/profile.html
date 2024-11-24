@@ -10,6 +10,24 @@ Login
 <p>{{ p_user.unique_id }}</p>
 <img src="{{ url_for('foto.get_user_image', user_id=p_user.id) }}" alt="user image">
 <h2>User Posts</h2>
+<form method="GET">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.tags.label }}: {{ form.tags(value=request.args.get('tags', '')) }}
+    </div>
+    <div>
+        {{ form.start_date.label }}: {{ form.start_date(value=request.args.get('start_date', '')) }}
+    </div>
+    <div>
+        {{ form.end_date.label }}: {{ form.end_date(value=request.args.get('end_date', '')) }}
+    </div>
+    <div>
+        {{ form.order_by.label }}: {{ form.order_by(value=request.args.get('order_by', '')) }}
+    </div>
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
 {% include "gallery_posts.html" %}
 
 {% endblock %}

@@ -1,7 +1,8 @@
 from .db import db, Post, Tag, Group, User, user_group, Score, Comment
 from datetime import datetime
 from .photo_manager import upload_image_to_webg, upload_image_to_webg_resized
-from sqlalchemy import or_, and_
+from .user_manager import get_users
+from sqlalchemy import or_, and_, not_
 from sqlalchemy import func
 
 def create_new_post(user_id: int, post_image, post_decs: str, post_tags: list[Tag], groups: list[Group], visibility: bool, allow_users: list[User] = None) -> Post:
@@ -257,5 +258,116 @@ def get_accessible_posts_group(user: User, page: int = 1, per_page: int = 50, gr
     posts = accessible_posts.items  # Current page's posts
     total = accessible_posts.total  # Total number of posts
     pages = accessible_posts.pages  # Total number of pages
+
+    return posts, total, pages
+
+def get_tokens(data):
+    tokens = data.split()
+    positive = []
+    negative = []
+    for token_data in tokens:
+        token: str = token_data
+        neg = False
+        if token_data.startswith("-"):
+            token = token_data[1:]
+            neg = True
+        if "-" in token:
+            return [],[],True
+        if neg:
+            negative.append(token)
+        else:
+            positive.append(token)
+    return positive, negative, False
+
+def get_posts_based_on_filters(
+        user: User, 
+        page: int = 1, 
+        per_page: int = 50, 
+        filter_tag_string:str=None, 
+        filter_user_string:str=None, 
+        order_by:str='date', 
+        start_date=None, 
+        end_date=None,
+        specific_user:id = None,
+        specific_tag:str = None,
+        specific_group = None
+    ):
+    filters = []
+
+    #filter by tags
+    if filter_tag_string:
+        p, n, err = get_tokens(filter_tag_string)
+        if err:
+            pass # Invalid token format
+        if not set(p).isdisjoint(n):
+            pass # Duplicate tags usage
+        if p:
+            filters.append(and_(*[Post.tags.any(Tag.name == tag) for tag in p]))
+        if n:
+            filters.append(not_(Post.tags.any(Tag.name.in_(n))))
+    
+    #filter by users
+    if filter_user_string:
+        users = filter_user_string.split()
+        p_user = get_users(users)
+        if users:
+            user_ids = [user.id for user in p_user]
+            filters.append(Post.owner_id.in_(user_ids))
+
+    # Filter for start date
+    if start_date:
+        filters.append(Post.post_date >= start_date)
+
+    # Filter for end date
+    if end_date:
+        print("End date: ", end_date)
+        filters.append(Post.post_date <= end_date)
+
+    # Specific tag
+    if specific_tag:
+        filters.append(Post.tags.any(Tag.name == specific_tag))
+
+    # Specific user
+    if specific_user:
+        filters.append(Post.owner_id == specific_user)
+
+    accessible_posts = None
+    if not user.is_authenticated:
+        accessible_posts = db.session.query(Post).filter(*filters).filter(Post.visibility == True)
+    else:
+        user_groups_subquery = (
+            db.session.query(Group.id)
+            .join(user_group, user_group.c.group_id == Group.id)
+            .filter(user_group.c.user_id == user.id)
+            .subquery()
+        )
+
+        accessible_posts = (
+            db.session.query(Post)
+            .outerjoin(Post.groups)  # Join the groups associated with the posts
+            .filter(*filters)
+            .filter(
+                or_(
+                    Post.owner_id == user.id,  # Posts owned by the user
+                    Post.visibility == True,  # Public posts
+                    Post.users.any(User.id == user.id),  # Posts explicitly shared with the user
+                    Post.groups.any(Group.id.in_(user_groups_subquery))  # Posts shared with user's groups
+                )
+            )
+        )
+
+    # Apply ordering
+    if order_by == 'time':
+        accessible_posts = accessible_posts.order_by(Post.post_date.desc())
+    elif order_by == 'score':
+        accessible_posts = accessible_posts.outerjoin(Score).group_by(Post.id).order_by(db.func.sum(Score.score).desc())
+    elif order_by == 'comments':
+        accessible_posts = accessible_posts.outerjoin(Comment).group_by(Post.id).order_by(db.func.count(Comment.id).desc())
+
+    pagination = accessible_posts.paginate(page=page, per_page=per_page)
+
+    posts = pagination.items  # Current page's posts
+    total = pagination.total  # Total number of posts
+    pages = pagination.pages  # Total number of pages
 
     return posts, total, pages
