@@ -21,23 +21,26 @@
         <ul class="gallery_pagination-list">
             <!-- Previous Page Link -->
             {% if page > 1 %}
-                <li><a href="{{ modify_query_params(page=page-1) }}">Previous</a></li>
+                <li><a href="{{ modify_query_params(page=page-1) }}"><div>Previous</div></a></li>
             {% else %}
-                <li class="disabled"><span>Previous</span></li>
+                <li class="disabled"><div><span>Previous</span></div></li>
             {% endif %}
 
-            <!-- Page Number Links -->
+            {% raw %}
+            <!-- Page Number Links
             {% for p in range(1, pages + 1) %}
                 <li class="{% if p == page %}active{% endif %}">
                     <a href="{{ modify_query_params(page=p) }}">{{ p }}</a>
                 </li>
             {% endfor %}
+            -->
+            {%endraw%}
 
             <!-- Next Page Link -->
             {% if page < pages %}
-                <li><a href="{{ modify_query_params(page=page+1) }}">Next</a></li>
+                <li><a href="{{ modify_query_params(page=page+1) }}"><div>Next</div></a></li>
             {% else %}
-                <li class="disabled"><span>Next</span></li>
+                <li class="disabled"><div><span>Next</span></div></li>
             {% endif %}
         </ul>
     {% endif %}

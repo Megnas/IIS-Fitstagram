@@ -261,13 +261,23 @@ body {
 }
 
 .gallery_pagination-list{
-    width: 100%;
+    width: 110em;
     display: flex;
+    justify-content: flex-end;
+    list-style: none;
+    padding-left: 0;
 }
 
-.gallery_pagination-list *{
-    flex: 1;
+.gallery_pagination-list div{
+    width: 6em;
+    height: 2em;
+    border: 0.1em solid #AAA;
+    margin-left: 1em;
+    display: flex;
+    justify-content: center;
+    padding-top: 0.5em;
 }
+
 
 /* Err */
 
