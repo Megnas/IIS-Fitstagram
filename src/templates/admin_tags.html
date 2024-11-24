@@ -1,0 +1,33 @@
+<!-- templates/admin.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Admin Page
+{% endblock %}
+
+{% block content %}
+
+<h2>Not Blocked Tags</h2>
+<ul>
+    {% for tag in not_blocked_tags %}
+        <li>
+            <span>#{{ tag.name }}</span>
+            <form action="{{ url_for('admin.admin_block_tag', tag_id=tag.id) }}" method="POST">
+                <button type="submit">Block</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+<h2>Blocked Tags</h2>
+<ul>
+    {% for tag in blocked_tags %}
+        <li>
+            <span>#{{ tag.name }}</span>
+            <form action="{{ url_for('admin.admin_block_tag', tag_id=tag.id) }}" method="POST">
+                <button type="submit">Unblock</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

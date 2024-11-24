@@ -6,13 +6,36 @@ Admin Page
 {% endblock %}
 
 {% block content %}
+
+{% if current_user_is_admin() %}
+<h2>Moderators</h2>
+<ul>
+    {% for user in moderators %}
+        <li>
+            <span>{{ user.username }} ({{ user.unique_id }}) - {{ user.email }}</span>
+            <form action="{{ url_for('admin.make_mod', user_id=user.id) }}" method="POST">
+                <button type="submit">Remove moderator</button>
+            </form>
+            <a href="{{ url_for('admin.admin_settings', user_id=user.id) }}">Settings</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <h2>Not Blocked Users</h2>
 <ul>
     {% for user in not_blocked_users %}
         <li>
-            {{ user.username }} - <form action="{{ url_for('admin.admin_block', user_id=user.id) }}" method="POST">
+            <span>{{ user.username }} ({{ user.unique_id }}) - {{ user.email }}</span>
+            <form action="{{ url_for('admin.admin_block', user_id=user.id) }}" method="POST">
                 <button type="submit">Block</button>
             </form>
+            {% if current_user_is_admin()%}
+            <form action="{{ url_for('admin.make_mod', user_id=user.id) }}" method="POST">
+                <button type="submit">Make moderator</button>
+            </form>
+            <a href="{{ url_for('admin.admin_settings', user_id=user.id) }}">Settings</a>
+            {% endif %}
         </li>
     {% endfor %}
 </ul>
@@ -21,7 +44,8 @@ Admin Page
 <ul>
     {% for user in blocked_users %}
         <li>
-            {{ user.username }} - <form action="{{ url_for('admin.admin_block', user_id=user.id) }}" method="POST">
+            <span>{{ user.username }} ({{ user.unique_id }}) - {{ user.email }}</span>
+            <form action="{{ url_for('admin.admin_block', user_id=user.id) }}" method="POST">
                 <button type="submit">Unblock</button>
             </form>
         </li>

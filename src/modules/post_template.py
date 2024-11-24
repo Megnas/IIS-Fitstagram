@@ -259,8 +259,9 @@ def edit_post(post_id):
 
     form.tags.data = ""
     for tag in post.tags:
-        form.tags.data += tag.name
-        form.tags.data += " " 
+        if not tag.blocked:
+            form.tags.data += tag.name
+            form.tags.data += " " 
 
     form.user.data = ""
     for user in post.users:

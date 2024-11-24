@@ -1,0 +1,71 @@
+<!-- templates/settings.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Settings
+{% endblock %}
+
+{% block content %}
+<h1>Update Your Profile</h1>
+<div class="general_view_page_container">
+    <!-- Flash message for success or errors -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <ul>
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Profile Form -->
+    <form method="POST" action="{{ url_for('admin.admin_settings', user_id=selected_user.id) }}" enctype="multipart/form-data"
+        class="upload_form">
+        {{ form.hidden_tag() }}
+        <img src="{{ url_for('foto.get_user_image', user_id=selected_user.id) }}"
+             alt="Profile Picture"
+             style="border-radius: 50%;"
+             id="imgPrev"
+            class="upload_form_pfp">
+        <div class="form-group">
+            <label for="username">Username</label>
+            {{ form.username(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email</label>
+            {{ form.email(class="form-control") }}
+        </div>
+
+        <div class="form-group">
+            <label for="unique_id">User ID</label>
+            {{ form.unique_id(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            <label for="password">New Password (optional)</label>
+            {{ form.password(class="form-control") }}
+        </div>
+        
+        <div class="form-group upload_form_picture">
+            <label for="profile_picture">Profile Picture</label>
+            {{ form.profile_picture(class="form-control") }}
+        </div>
+        
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+<script>
+    let imgInp = document.getElementById("profile_picture");
+    let imgPrev = document.getElementById("imgPrev");
+    imgInp.onchange = evt => {
+        const [file] = imgInp.files
+        if (file) {
+            imgPrev.src = URL.createObjectURL(file);
+        }
+    }
+</script>
+{% endblock %}
