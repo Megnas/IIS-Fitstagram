@@ -2,7 +2,7 @@ from flask import Flask, render_template, request
 from flask_login import current_user
 from dotenv import load_dotenv
 import os
-from modules.db import db
+from modules.db import db, Roles
 from modules.auth import init_login_manager
 import modules.photo_manager as pm
 import modules.user_manager as um
@@ -57,12 +57,25 @@ def utility_functions():
     #retuns user object from id
     def get_user(usr_id: int):
         return um.get_user(usr_id)
+    def current_user_is_moderator():
+        if not current_user.is_authenticated():
+            return False
+        return current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN
+    def current_user_is_admin():
+        if not current_user.is_authenticated():
+            return False
+        return current_user.role == Roles.ADMIN
     def modify_query_params(**kwargs):
         """Helper function to modify query parameters dynamically."""
         args = request.args.to_dict()  # Get current query parameters
         args.update(kwargs)  # Update with new parameters
         return f"{request.path}?{'&'.join([f'{k}={v}' for k, v in args.items()])}"
-    return dict(get_user=get_user, modify_query_params=modify_query_params)
+    return dict(
+        get_user=get_user, 
+        modify_query_params=modify_query_params,
+        current_user_is_moderator=current_user_is_moderator,
+        current_user_is_admin=current_user_is_admin
+    )
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

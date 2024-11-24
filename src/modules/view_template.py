@@ -71,7 +71,7 @@ def galery():
     posts, tototal, pages = get_posts_based_on_filters(
         current_user, 
         page=page, 
-        per_page=(4 * 6), 
+        per_page=24, 
         order_by=order_by, 
         start_date=start_date, 
         end_date=end_date, 

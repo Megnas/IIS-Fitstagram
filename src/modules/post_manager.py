@@ -290,7 +290,7 @@ def get_tokens(data):
 def get_posts_based_on_filters(
         user: User, 
         page: int = 1, 
-        per_page: int = 50, 
+        per_page: int = 24, 
         filter_tag_string:str=None, 
         filter_user_string:str=None, 
         order_by:str='date', 
@@ -372,7 +372,7 @@ def get_posts_based_on_filters(
     elif order_by == 'comments':
         accessible_posts = accessible_posts.outerjoin(Comment).group_by(Post.id).order_by(db.func.count(Comment.id).desc())
 
-    pagination = accessible_posts.paginate(page=page, per_page=per_page)
+    pagination = accessible_posts.paginate(page=page, per_page=per_page + 1)
 
     posts = pagination.items  # Current page's posts
     total = pagination.total  # Total number of posts
