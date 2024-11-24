@@ -56,6 +56,11 @@ Group homepage
             }}">Request join</a>
         {% endif%}
     {% endif %}
+    {% if owner or current_user_is_moderator %}
+        <a href="{{
+            url_for('groups.remove_group', group_id=group.id)
+        }}">Delete group</a>
+    {% endif %}
 {% endif %}
 </div>
 

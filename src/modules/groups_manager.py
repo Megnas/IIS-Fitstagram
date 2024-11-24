@@ -137,6 +137,7 @@ def edit_group(
 def delete_group(group_id: int):
     group = db.session.query(Group).filter(Group.id == group_id).first()
     db.session.delete(group)
+    db.session.commit()
     
 def add_user_to_group(group_id: int, user_id: int):
     group = db.session.query(Group).filter(Group.id == group_id).first()

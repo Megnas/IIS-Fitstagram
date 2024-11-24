@@ -17,6 +17,7 @@ from .groups_manager import (
     get_user_member_groups,
     remove_user_from_group,
     get_user_count,
+    delete_group,
     transfer_ownership_to_next,
 )
 from .invites_manager import (
@@ -195,6 +196,25 @@ def leave_group(group_id):
             return redirect(url_for("groups.group_homepage", group_id=group_id))
 
     remove_user_from_group(group_id=group_id, user_id=user_id)
+    return redirect(url_for("groups.groups"))
+
+@bp.route("/remove_group/<int:group_id>")
+@login_required
+def remove_group(group_id):
+    group = get_group(group_id=group_id)
+    if (group == None):
+        return abort(404, "Could not find group")
+    if (
+        group.owner_id != current_user.id and
+        (
+            current_user.role == Roles.MODERATOR or
+            current_user.role == Roles.ADMIN
+        )
+    ):
+        return abort(401, "You don't have permission to remove group")
+    
+    delete_group(group_id)
+    
     return redirect(url_for("groups.groups"))
     
 @bp.route("/group_users/<int:group_id>", methods=['GET'])

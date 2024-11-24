@@ -40,8 +40,8 @@ class User(db.Model, UserMixin):
     role: Mapped[int] = mapped_column(db.Enum(Roles), nullable=False)
     photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id), nullable=True)
     blocked: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
-    groups = db.relationship("Group", secondary=user_group, back_populates="users")
-    posts = db.relationship("Post", secondary=user_post, back_populates="users")
+    groups = db.relationship("Group", secondary=user_group, back_populates="users", cascade="all, delete")
+    posts = db.relationship("Post", secondary=user_post, back_populates="users", cascade="all, delete")
 
 group_post = db.Table("group_post",
     db.Column("group_id", db.Integer, db.ForeignKey("group.id")),
@@ -55,8 +55,8 @@ class Group(db.Model):
     description: Mapped[str] = mapped_column(db.String(256), nullable=False)
     photo_id: Mapped[int] = mapped_column(ForeignKey(Photo.id), nullable=True)
     visibility: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
-    users = db.relationship("User", secondary=user_group, back_populates="groups")
-    posts = db.relationship("Post", secondary=group_post, back_populates="groups")
+    users = db.relationship("User", secondary=user_group, back_populates="groups", cascade="all, delete")
+    posts = db.relationship("Post", secondary=group_post, back_populates="groups", cascade="all, delete")
 
     def __str__(self):
         return self.name
@@ -75,15 +75,15 @@ class Post(db.Model):
     photo_id: Mapped[str] = mapped_column(ForeignKey(Photo.id), nullable=False)
     miniature_id: Mapped[str] = mapped_column(ForeignKey(Photo.id), nullable=False)
     visibility: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
-    tags = db.relationship("Tag", secondary=post_tag, back_populates="posts")
-    groups = db.relationship("Group", secondary=group_post, back_populates="posts")
-    users = db.relationship("User", secondary=user_post, back_populates="posts")
+    tags = db.relationship("Tag", secondary=post_tag, back_populates="posts", cascade="all, delete")
+    groups = db.relationship("Group", secondary=group_post, back_populates="posts", cascade="all, delete")
+    users = db.relationship("User", secondary=user_post, back_populates="posts", cascade="all, delete")
 
 class Tag(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(db.String(64), nullable=False, unique=True, index=True)
     blocked: Mapped[bool] = mapped_column(db.Boolean, nullable=False)
-    posts = db.relationship("Post", secondary=post_tag, back_populates="tags")
+    posts = db.relationship("Post", secondary=post_tag, back_populates="tags", cascade="all, delete")
 
 class GroupInvite(db.Model):
     user_id: Mapped[int] = mapped_column(ForeignKey(User.id), primary_key=True, )
