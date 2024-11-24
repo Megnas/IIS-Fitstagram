@@ -7,5 +7,12 @@ Home Page
 
 {% block content %}
     <h2>Welcome to the Homepage</h2>
+<div class="general_view_page_container bottom_margin" >
+    <a href="{{ url_for('view.galery') }}">
+        <div class="scroll_more_btn">
+            <span>Switch to gallery mode</span>
+        </div>
+    </a>
+</div>
    {% include "scroll_posts.html" %}
 {% endblock %}

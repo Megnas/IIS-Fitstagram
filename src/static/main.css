@@ -38,6 +38,11 @@ body {
 
 
 
+/* add */
+.bottom_margin div{
+    margin-bottom: 1em;
+}
+
 
 /* HEADER - DO NOT TOUCH OR EVERYTHING WILL BREAK */
 .header-container {
@@ -245,6 +250,7 @@ body {
     list-style: none;
     color: #9C1A1C;
 }
+
 
 
 /* Post View */
