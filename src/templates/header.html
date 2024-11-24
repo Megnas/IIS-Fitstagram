@@ -9,7 +9,7 @@
             </div>
         </a>
         <div class="search-bar">
-            <form action="/search" method="get">
+            <form action="{{ url_for('search.search') }}" method="get">
                 <input type="text" name="query" placeholder="Search..." aria-label="Search">
                 <button type="submit">Search</button>
             </form>
