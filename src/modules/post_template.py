@@ -124,6 +124,9 @@ def post(post_id):
     if not post:
         abort(404, description="User does not exists.")
 
+    if get_user(post.owner_id).blocked:
+        abort(404, "Poster of this is blocked!")
+
     if not post.visibility:
         if not current_user.is_authenticated:
             abort(401, description="Not authorized!")

@@ -201,7 +201,7 @@ def get_posts_based_on_filters(
 
     accessible_posts = None
     if not user.is_authenticated:
-        accessible_posts = db.session.query(Post).filter(*filters).filter(Post.visibility == True)
+        accessible_posts = db.session.query(Post).filter(*filters).filter(Post.visibility == True, User.blocked == False)
     else:
         user_groups_subquery = (
             db.session.query(Group.id)
@@ -220,9 +220,13 @@ def get_posts_based_on_filters(
                     Post.visibility == True,  # Public posts
                     Post.users.any(User.id == user.id),  # Posts explicitly shared with the user
                     Post.groups.any(Group.id.in_(user_groups_subquery))  # Posts shared with user's groups
-                )
+                ),
+                User.blocked == False
             )
         )
+
+    #Hide posts from blocked users
+    #accessible_posts = accessible_posts.join(User).filter(User.blocked == False)
 
     # Apply ordering
     if order_by == 'time':

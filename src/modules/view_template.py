@@ -151,6 +151,9 @@ def tag():
 def profile(user_id):
     user = get_user(user_id)
     if(user):
+        if user.blocked:
+            abort(404, "Tag is blocked!")
+
         page = request.args.get('page', 1, type=int)
 
         form = PostFilterForm()
