@@ -236,9 +236,11 @@ def group_users(group_id):
 @bp.route("/groups", methods=['GET'])
 def groups():
     if (current_user.is_authenticated):
-        groups = get_user_accesible_groups(current_user.id)       
         owned_groups = get_user_owned_groups(current_user.id)
         member_groups = get_user_member_groups(current_user.id)
+        groups = get_user_accesible_groups(current_user.id)       
+        groups = [group for group in groups if group not in member_groups]
+        member_groups = [group for group in member_groups if group not in owned_groups]
     else:
         groups = get_public_groups()
         owned_groups = None
