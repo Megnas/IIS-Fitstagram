@@ -34,6 +34,12 @@ def purge_db():
     db.session.commit()
     click.echo("All tables have been purged.")
 
+@app.cli.command("init_db")
+def purge_db():
+    """Create the database"""
+    db.create_all()
+    click.echo("Created the database")
+
 @app.cli.command('create_admin')
 @click.argument('email')
 @click.argument('password')
