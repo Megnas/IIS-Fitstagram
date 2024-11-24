@@ -63,7 +63,7 @@ class CreateComment(FlaskForm):
 @login_required
 def create_post():
     form = PostForm()
-    form.groups.query = get_user_member_groups(current_user.id)
+    #form.groups.query = get_user_member_groups(current_user.id)
 
     if form.validate_on_submit():
         #Tags
