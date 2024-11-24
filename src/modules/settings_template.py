@@ -47,7 +47,6 @@ def settings():
             update_user(user, form.username.data, form.email.data, form.password.data, form.profile_picture.data, form.unique_id.data)
             flash('Your settings have been updated!', 'success')
         except:
-            db.session.rollback()
             flash('Your settings have not been updated!', 'danger')
         return redirect(url_for('settings.settings'))
 

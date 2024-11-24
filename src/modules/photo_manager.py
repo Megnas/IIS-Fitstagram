@@ -22,12 +22,8 @@ def upload_image_to_webg(file, quality: int = 90) -> int:
     mimetype = 'image/webp'
 
     new_photo = Photo(name=name, data=img_io.read(), mimetype=mimetype)
-    try:
-        db.session.add(new_photo)
-        db.session.commit()
-    except:
-        db.session.rollback()
-        return None
+    db.session.add(new_photo)
+    db.session.commit()
 
     return new_photo.id
 
@@ -45,12 +41,8 @@ def upload_image_to_webg_resized(file, quality: int = 60, pheight: int =256, pwi
     mimetype = 'image/webp'
 
     new_photo = Photo(name=name, data=img_io.read(), mimetype=mimetype)
-    try:
-        db.session.add(new_photo)
-        db.session.commit()
-    except:
-        db.session.rollback()
-        return None
+    db.session.add(new_photo)
+    db.session.commit()
 
     return new_photo.id
 

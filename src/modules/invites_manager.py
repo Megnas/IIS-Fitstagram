@@ -47,18 +47,16 @@ def invite_user_to_group(group_id: int, user_id: int):
     ).first()
     if (invite != None):
         return
-    try:
-        invite = GroupInvite(
-            user_id=user.id,
-            group_id=group.id,
-            user_pending=True,
-            group_pending=False,
-            date_created=datetime.now()
-        )
-        db.session.add(invite)
-        db.session.commit()
-    except:
-        db.session.rollback()
+
+    invite = GroupInvite(
+        user_id=user.id,
+        group_id=group.id,
+        user_pending=True,
+        group_pending=False,
+        date_created=datetime.now()
+    )
+    db.session.add(invite)
+    db.session.commit()
 
 def request_group_join(group_id: int, user_id: int):
     group = db.session.query(Group).filter(Group.id == group_id).first()
@@ -75,18 +73,16 @@ def request_group_join(group_id: int, user_id: int):
     ).first()
     if (invite != None):
         return
-    try:
-        invite = GroupInvite(
-            user_id=user.id,
-            group_id=group.id,
-            user_pending=False,
-            group_pending=True,
-            date_created=datetime.now()
-        )
-        db.session.add(invite)
-        db.session.commit()
-    except:
-        db.session.rollback()
+
+    invite = GroupInvite(
+        user_id=user.id,
+        group_id=group.id,
+        user_pending=False,
+        group_pending=True,
+        date_created=datetime.now()
+    )
+    db.session.add(invite)
+    db.session.commit()
     
 def cancel_group_invite(user_id: int, group_id: int):
     invite = db.session.query(GroupInvite).filter(
@@ -123,11 +119,10 @@ def approve_group_invite(user_id: int, group_id: int):
 
     if (user in group.users):
         return None
-    try:
-        group.users.append(user)
-        db.session.commit()
-    except:
-        db.session.rollback()
+    
+    group.users.append(user)
+
+    db.session.commit()
     
 def get_invite(user_id: int, group_id: int) -> GroupInvite:
     invite = db.session.query(GroupInvite).filter(
