@@ -8,11 +8,12 @@ from wtforms_alchemy import QuerySelectMultipleField
 from .groups_manager import get_user_member_groups
 from .tag_manager import get_valid_tag
 from .user_manager import get_user_from_uid, get_user
-from .post_manager import create_new_post, get_post_by_id, can_see_post, get_like_status, change_like_status, get_post_score, create_comment, get_comments
+from .post_manager import create_new_post, get_post_by_id, can_see_post, get_like_status, change_like_status, get_post_score, create_comment, get_comments, get_comment
+from .post_manager import delete_comment as delete_comment_from_db
 from wtforms import widgets
 
 
-from .db import Post
+from .db import Post, Comment
 
 bp = Blueprint('post', __name__)
 
@@ -134,7 +135,7 @@ def post(post_id):
 def like(post_id):
     post: Post = get_post_by_id(post_id)
     if not post:
-        abort(404, description="User does not exists.")
+        abort(404, description="Post does not exists.")
     
     change_like_status(post, current_user, True)
 
@@ -145,9 +146,27 @@ def like(post_id):
 def dislike(post_id):
     post: Post = get_post_by_id(post_id)
     if not post:
-        abort(404, description="User does not exists.")
+        abort(404, description="Post does not exists.")
 
     change_like_status(post, current_user, False)
+
+    return redirect(url_for('post.post', post_id=post_id))
+
+@bp.route('/delete_comment/<int:commet_id>/<int:post_id>', methods=['POST'])
+@login_required
+def delete_comment(commet_id, post_id):
+    post: Post = get_post_by_id(post_id)
+    if not post:
+        abort(404, description="Post does not exists.")
+
+    comment: Comment = get_comment(commet_id)
+    if not comment:
+        abort(404, description="Comment does not exists.")
+
+    if not comment.user_id == current_user.id:
+        abort(401, description="You dont have permissions")
+
+    delete_comment_from_db(comment)
 
     return redirect(url_for('post.post', post_id=post_id))
 

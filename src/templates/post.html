@@ -59,6 +59,11 @@ Post
             {% with c_user = get_user(com.user_id) %}
               <li>
                   <div class="post_view_comment_div">
+                    {% if com.user_id == user.id %}
+                    <form action="{{ url_for('post.delete_comment', commet_id=com.id, post_id=post.id) }}" method="post">
+                        <button type="submit">Delete Comment</button>
+                    </form>
+                    {%endif %}
                     <a href="{{ url_for('view.profile', user_id=c_user.id) }}">
                         <div class="post_view_comment_user">
                             <img src="{{ url_for('foto.get_user_image', user_id=c_user.id) }}" alt="user image">

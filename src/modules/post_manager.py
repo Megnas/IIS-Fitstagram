@@ -98,6 +98,14 @@ def get_comments(post: Post) -> [Comment]:
     comments: Comment = db.session.query(Comment).filter(Comment.post_id == post.id).all()
     return comments
 
+def get_comment(comment_id: int) -> Comment:
+    comment: Comment = db.session.query(Comment).filter(Comment.id == comment_id).one()
+    return comment
+
+def delete_comment(comment: Comment):
+    db.session.delete(comment)
+    db.session.commit()
+
 def get_accessible_posts(user: User, page: int = 1, per_page: int = 50):
     if not user.is_authenticated:
         accessible_posts = db.session.query(Post).filter(Post.visibility == True).order_by(Post.post_date.desc()).paginate(page=page, per_page=per_page)
