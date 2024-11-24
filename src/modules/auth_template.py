@@ -44,8 +44,8 @@ def register():
             #flash('Registration successful! You can now log in.', 'success')
             return redirect(url_for('view.index'))
         except Exception as e:
+            flash('UID or Email already in use.', 'danger')
             flash('Registration Failed.', 'danger')
-            print("Registration failed!", e)
 
     if form.unique_id.errors:
         flash("User ID must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.", 'danger')
