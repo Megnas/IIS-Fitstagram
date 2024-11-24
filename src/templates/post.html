@@ -12,17 +12,19 @@ Post
             <img src="{{ url_for('foto.get_user_image', user_id=p_user.id) }}" alt="user image">
             <p>By: {{ p_user.username }} ({{ p_user.unique_id }})</p>
         </a>
-        {% if post.owner_id == user.id or current_user_is_moderator() %}
-            <form action="{{ url_for('post.delete_post', post_id=post.id) }}" method="post">
-            <button type="submit">Delete Post</button>
-            </form>
-        {%endif %}
+        <div class="post_edit_container">
+            {% if post.owner_id == user.id %}
+                <a href="{{ url_for('post.edit_post', post_id=post.id) }}">Edit post</a>
+            {%endif %}
+            {% if post.owner_id == user.id or current_user_is_moderator() %}
+                <form action="{{ url_for('post.delete_post', post_id=post.id) }}" method="post">
+                <button type="submit">Delete Post</button>
+                </form>
+            {%endif %}
+        </div>
         <div class="post_view_container_img">
             <img src="{{ url_for('foto.get_post_image', post_id=post.id) }}" alt="user image" class="post_view_container_img">
         </div>
-        {% if post.owner_id == user.id %}
-            <a href="{{ url_for('post.edit_post', post_id=post.id) }}">Edit post</a>
-        {%endif %}
         <p>Date: {{ post.post_date }}</p>
         <p>Description: {{ post.description }}</p>
         <p>

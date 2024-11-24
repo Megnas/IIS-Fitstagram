@@ -9,8 +9,6 @@ Edit Post
 <div class="general_view_page_container">
 
     <h1>Edit Post</h1>
-
-    <img id="img_preview" src="{{ url_for('foto.get_post_image', post_id=post.id) }}" alt="" class="upload_form_img"/>
         <!-- Flash message for success or errors -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -24,6 +22,7 @@ Edit Post
 
     <!-- Create post Form -->
     <form method="POST" enctype="multipart/form-data" class="upload_form">
+        <img id="img_preview" src="{{ url_for('foto.get_post_image', post_id=post.id) }}" alt="" class="upload_form_img"/>
         {{ form.hidden_tag() }}
 
         <div class="form-group upload_form_desc">

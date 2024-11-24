@@ -414,6 +414,34 @@ body {
     flex-direction: column;
 }
 
+.post_edit_container{
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: row;
+    padding-right: 1em;
+    margin-bottom: 1em;
+}
+
+.post_edit_container *{
+    margin-left: 1em;
+}
+
+.post_edit_container a{
+    bottom: 0;
+}
+
+.post_edit_container button{
+    background-color: white;
+    border: none;
+    font-size: 1em;
+    color: red;
+    padding: 0em;
+}
+
+.post_edit_container button:hover{
+    color: #9C1A1C;
+}
+
 .scroll_pagination{
     width: 95%;
     margin: auto;
