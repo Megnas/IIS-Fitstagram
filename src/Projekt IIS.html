@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0064)https://www.fit.vut.cz/study/course/IIS/private/projekt/doc.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-2">
+    
+    <title>Projekt IIS</title>
+    <style type="text/css">
+    	table { border-collapse: collapse; }
+    	td, th { border: 1px solid black; padding: 0.3em 0.5em; text-align: left; }
+    	dt { font-weight: bold; margin-top: 0.5em; }
+    </style>
+</head>
+<body data-new-gr-c-s-check-loaded="14.1209.0" data-gr-ext-installed="">
+
+<!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu 
+     podle použitého editoru -->
+
+<h1>Fitstagram</h1> <!-- Nahradte názvem svého zadání -->
+
+<dl>
+	<dt>Autoři</dt>
+	<dd>
+	    <a href="mailto:xvacla37@stud.fit.vutbr.cz">xvacla37@stud.fit.vutbr.cz</a> -
+		popis činnosti v týmu
+	</dd>
+	<dd>
+	    <a href="mailto:xsedla2d@stud.fit.vutbr.cz">xsedla2d@stud.fit.vutbr.cz</a> - 
+		popis činnosti v týmu
+	</dd>
+  <dd>
+	    <a href="mailto:xslany03@stud.fit.vutbr.cz">xslany03@stud.fit.vutbr.cz</a> - 
+      správa skupin a pozvánek
+	</dd>
+	<dt>URL aplikace</dt>
+	<dd><a href="http://megnas.cz">http://megnas.cz</a></dd>
+</dl>
+
+<table>
+<tbody><tr><th>Login</th><th>Heslo</th><th>Role</th></tr>
+<tr><td>admin@test.com</td><td>admin4site</td><td>Administrátor</td></tr>
+<tr><td>mod@test.com</td><td>mod4site</td><td>Moderátor</td></tr>
+<tr><td>user@test.com</td><td>user4site</td><td>Uživatel</td></tr>
+</tbody></table>
+
+<h3>Video</h3>
+
+<p>Přiložte odkaz na komentované video demostrující použití informačního systému. Zaměřte se na případy užití definované zadáním (např. registrace uživatele, správa uživatelů a činnosti jednotlivých rolí). Video nahrajte například na VUT Google Drive, kde ho bude možné přímo spustit z odkazu.</p> 
+
+<h2>Implementace</h2>
+<ul>
+  <li><b>app.py</b> - Vstupní soubor aplikace - nahrává proměne prostředí, implementuje příkazy, funkce a proměné pro preprocesor a registruje návrhy stránek</li>
+  <li><b>db.py</b> - Obsahuje popis modelu databáze pomocí ORM</li>
+  <li><b>auth.py</b> - obsahuje nastavení authentifikačního manažeru</li>
+  <li><b>*_manager.py</b> - generický soubor obsahují běžné operace nad databázi</li>
+  <li><b>*_template.py</b> - generický soubor obsahují popis endpointů</li>
+</ul>
+
+<h3>Databáze</h3>
+
+Zde vložte grafické schéma relační databáze (tabulek v databázi).
+
+<h2>Instalace</h2>
+
+<h3>Postup installace</h3>
+<p>
+Stažení zdrojových souborů, volitelně vytvoření a aktivace python venv.
+Instalace požadovaných python balíčku s pomocí
+<code>
+  pip install -r requirements.txt
+</code>
+Následně spuštění pomocí 
+<code>
+  flask run
+</code>
+</p>
+<p>
+Požadován je python, nejnižší testovaná verze během vývoje 3.11. 
+dále mysql pro databázi.
+</p>
+<p>
+Databázi lze konfigurovat přidáním souboru .env (v adresáři src) do kterého je
+možné zapsat záznam <code>DATABASE_URL=...</code> a přidat url databáze. Jinak
+aplikace vytvoří soubor databáze v lokálním adresáři. Databáze se potom 
+inicializuje s pomocí přikazu <code>flask init_db</code>
+</p>
+
+<h2>Známé problémy</h2>
+
+
+
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root="true"><template shadowrootmode="open"><style>
+      div.grammarly-desktop-integration {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select:none;
+        user-select:none;
+      }
+
+      div.grammarly-desktop-integration:before {
+        content: attr(data-content);
+      }
+    </style><div aria-label="grammarly-integration" role="group" tabindex="-1" class="grammarly-desktop-integration" data-content="{&quot;mode&quot;:&quot;limited&quot;,&quot;isActive&quot;:false,&quot;isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integration></html>
