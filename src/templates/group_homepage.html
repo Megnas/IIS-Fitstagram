@@ -7,14 +7,24 @@ Group homepage
 
 {% block content %}
 <h1> {{group.name}}</h1>
+
+<div class="group_links">
 {% if owner %}
-<a href="{{ url_for('groups.edit_group', group_id=group.id)}}">
-    Edit group
-</a>
-{% endif %}
-<a href="{{ url_for('groups.group_users', group_id=group.id)}}">
-    Users
-</a>
+    <a href="{{ url_for('groups.edit_group', group_id=group.id)}}">
+        Edit group
+    </a>
+    {% endif %}
+    <a href="{{ url_for('groups.group_users', group_id=group.id)}}">
+        Users
+    </a>
+</div>
+
+<div class="group_desc">
+    <div>Description:</div>
+    <span>
+    {{ group.description }}
+    </span>
+</div>
 
 <h2>Group Image board</h2>
 <form method="GET" class="filter_form">

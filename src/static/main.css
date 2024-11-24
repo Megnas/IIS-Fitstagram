@@ -195,6 +195,31 @@ body {
     transition: 0.2s;
 }
 
+.group_desc{
+    width: 95%;
+    margin-top:2em;
+    padding: 1em 2.5%;
+    border: 0.1em solid #AAA;
+    font-size: 0.8em;
+}
+
+.group_desc span{
+    margin-left: 1.5em;
+}
+
+.group_links{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.group_links a{
+    margin-left: 2em;
+}
+
+.group_links a:hover{
+    text-decoration: underline;
+}
+
 /* Content */
 
 .gallery_post_list_container{
@@ -514,3 +539,4 @@ body {
     border: thin solid #AAA;
     border-radius: 0;
 }
+
