@@ -129,6 +129,17 @@ def approve_join(group_id, user_id):
 
     return redirect(url_for("groups.group_users", group_id=group_id))
 
+@bp.route("/group_accept_invite/<int:group_id>", methods=['GET'])
+@login_required
+def accept_invite(group_id):
+    group = get_group(group_id)
+    if (group == None):
+        return abort(404, "Could not find group")
+    
+    approve_group_invite(user_id=current_user.id, group_id=group_id)
+
+    return redirect(url_for("groups.group_homepage", group_id=group_id))
+
 @bp.route("/group_reject_user/<int:group_id>/<int:user_id>", methods=['GET'])
 @login_required
 def reject_join(group_id, user_id):
@@ -138,7 +149,21 @@ def reject_join(group_id, user_id):
     # Only the group owner or the user himself can reject join
     if (group.owner_id != current_user.id and user_id != current_user.id):
         return abort(401, "User does not have acces to this group")
+
+    cancel_group_invite(group_id=group_id, user_id=user_id)
+
     return redirect(url_for("groups.group_users", group_id=group_id))
+
+@bp.route("/group_cancel_join/<int:group_id>", methods=['GET'])
+@login_required
+def cancel_join(group_id):
+    group = get_group(group_id)
+    if (group == None):
+        return abort(404, "Could not find group")
+
+    cancel_group_invite(group_id=group_id, user_id=current_user.id)
+
+    return redirect(url_for("groups.group_homepage", group_id=group_id))
 
 @bp.route("/group_kick_user/<int:group_id>/<int:user_id>", methods=['GET'])
 @login_required
@@ -153,19 +178,20 @@ def kick_user(group_id, user_id):
     remove_user_from_group(group_id=group_id, user_id=user_id)
     return redirect(url_for("groups.group_users", group_id=group_id))
 
-@bp.route("/group_leave/<int:group_id>/<int:user_id>", methods=['GET'])
+@bp.route("/group_leave/<int:group_id>", methods=['GET'])
 @login_required
-def leave_group(group_id, user_id):
+def leave_group(group_id):
     group = get_group(group_id)
     if (group == None):
         return abort(404, "Could not find group")
-    if (group.owner_id != current_user.id) and user_id != current_user.id:
-        return abort(401, "User does not have acces to this group")
     
     if (group.owner_id == current_user.id):
+        print("Owner trying to leave")
         if (get_user_count(group_id=group_id) > 0):
+            print("Transferring ownership")
             transfer_ownership_to_next(group_id=group_id)
         else:
+            print("Did not transfer ownership")
             return redirect(url_for("groups.group_homepage", group_id=group_id))
 
     remove_user_from_group(group_id=group_id, user_id=user_id)
@@ -264,6 +290,10 @@ def group_homepage(group_id):
     form.order_by.data = order_by
 
     if (current_user.is_authenticated):
+        invite = get_invite(
+                user_id=current_user.id, 
+                group_id=group.id
+            )
         if (current_user.id == group.owner_id or
             current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN
         ):
@@ -279,12 +309,11 @@ def group_homepage(group_id):
                     group_id=group.id,
                     user_id=current_user.id
                 ),
-                invite=get_invite(
-                    user_id=current_user.id, 
-                    group_id=group.id
-                ),
+                invite=invite,
             )
-        if ( user_is_member(user_id=current_user.id, group_id=group.id)):
+        if ( user_is_member(user_id=current_user.id, group_id=group.id) or
+        group.visibility
+        ):
             return render_template(
                 "group_homepage.html", 
                 group=group, 
@@ -297,10 +326,7 @@ def group_homepage(group_id):
                     group_id=group.id,
                     user_id=current_user.id
                 ),
-                invite=get_invite(
-                    user_id=current_user.id, 
-                    group_id=group.id
-                ),
+                invite=invite,
             )
 
     if (group.visibility):
@@ -313,7 +339,7 @@ def group_homepage(group_id):
             pages=pages,
             form=form,
             is_member=False,
-            invite=None,
+            invite=invite,
         )
 
     return abort(401, "User does not have acces to this group")

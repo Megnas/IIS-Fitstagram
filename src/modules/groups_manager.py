@@ -13,7 +13,7 @@ def get_group_owner(group_id: int) -> User:
 def user_is_member(user_id: int, group_id: int) -> bool:
     user = db.session.query(User).filter(User.id == user_id).first()
     group = db.session.query(Group).filter(Group.id == group_id).first()
-    if (user.id == group.owner_id or user.id in group.users):
+    if (user.id == group.owner_id or user in group.users):
         return True
     return False
 
@@ -127,10 +127,12 @@ def transfer_ownership_to_next(group_id: int):
     owner = get_group_owner(group_id=group_id)
     group = get_group(group_id=group_id)
     if (len(group.users) <= 0):
+        print("Ownership transfer impossible")
         return
-    new_owner = group.users[0]
+    new_owner = group.users.pop(0)
+    print("New owner "+new_owner.username)
     group.users.append(owner)
-    group.owner = new_owner.id
+    group.owner_id = new_owner.id
 
     db.session.commit()
 

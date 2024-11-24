@@ -29,13 +29,22 @@ Group homepage
         {% if invite is not none %}
             {% if invite.user_pending %}
                 <a href="{{
-                    url_for('groups.request_join',
-                    group_id=group.id,
-                    user_id=user.id
+                    url_for('groups.accept_invite',
+                    group_id=group.id
+                    )
+                }}"> Accept invitation</a>
+                <a href="{{
+                    url_for('groups.cancel_join',
+                    group_id=group.id
+                    )
+                }}">
+                Decline invitation</a>
+            {% else %}
+                <a href="{{
+                    url_for('groups.cancel_join',
+                    group_id=group.id
                     )
                 }}">Cancel join request</a>
-            {% else %}
-                <a>Decline invitation</a>
             {% endif %}
         {% else %}
             <a href="{{
