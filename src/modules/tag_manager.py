@@ -1,5 +1,14 @@
 from .db import db, Tag
 
+def get_similar_tags(patern: str) -> [Tag]:
+    like_pattern = f"%{patern}%"
+
+    results = Tag.query.filter(
+        Tag.name.ilike(like_pattern)
+    ).all()
+
+    return results
+
 def get_valid_tag_id(tag_name: str) -> int:
     tag: Tag = db.session.query(Tag).filter(Tag.name == tag_name).first()
     if(tag):
