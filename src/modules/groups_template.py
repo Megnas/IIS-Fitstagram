@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, abort, request
 from flask_login import login_required, current_user
 from . import groups_manager
-from .db import Roles, User
+from .db import Roles, User, db
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, BooleanField, SelectField, SubmitField
@@ -376,6 +376,7 @@ def edit_group(group_id):
             )
             return redirect(url_for("groups.group_homepage", group_id=group_id))
         except Exception as e:
+            db.session.rollback()
             flash("Could not edit group", "danger")
             print(f"Could not create group {e}")
         return redirect(url_for("groups.group_homepage", group_id=group_id))
@@ -407,6 +408,7 @@ def create_group():
             )
             return redirect(url_for("groups.group_homepage", group_id=group.id))
         except Exception as e:
+            db.session.rollback()
             flash("Could not create group", "danger")
             print(f"Could not create group {e}")
             
