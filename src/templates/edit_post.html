@@ -1,0 +1,83 @@
+<!-- templates/edit_post.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Edit Post
+{% endblock %}
+
+{% block content %}
+<div class="general_view_page_container">
+
+    <h1>Edit Post</h1>
+
+    <img id="img_preview" src="{{ url_for('foto.get_post_image', post_id=post.id) }}" alt="" class="upload_form_img"/>
+        <!-- Flash message for success or errors -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="err">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Create post Form -->
+    <form method="POST" enctype="multipart/form-data" class="upload_form">
+        {{ form.hidden_tag() }}
+
+        <div class="form-group upload_form_desc">
+            {{ form.description.label }}
+            {{ form.description() }}
+        </div>
+
+        <div class="form-group">
+            {{ form.tags.label }}
+            {{ form.tags() }}
+        </div>
+
+        <div class="form-group upload_form_list" id="group-field" >
+            {{ form.groups.label }}
+            {{ form.groups() }}
+        </div>
+
+        <div class="form-group">
+            {{ form.visibility.label }}
+            {{ form.visibility() }} <!-- Visibility toggle checkbox -->
+        </div>
+
+        <div class="form-group" id="user-field">
+            {{ form.user.label }}
+            {{ form.user() }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</div>
+<script>
+    // JavaScript to handle showing or hiding the user field based on visibility checkbox
+    document.addEventListener('DOMContentLoaded', function () {
+        const visibilityCheckbox = document.querySelector('[name="visibility"]');
+        const userField = document.getElementById('user-field');
+        const userInput = document.querySelector('[name="user"]');  // Get the user input field
+
+        // Function to toggle user field visibility
+        function toggleUserField() {
+            if (visibilityCheckbox.checked) {
+                userField.style.display = 'none';  // Hide user field if visibility is true
+                userInput.disabled = true;         // Disable user input to prevent it from being submitted
+            } else {
+                userField.style.display = 'block';  // Show user field if visibility is false
+                userInput.disabled = false;         // Enable user input if the field is visible
+            }
+        }
+
+        // Initial check on page load
+        toggleUserField();
+
+        // Listen for changes to the visibility checkbox
+        visibilityCheckbox.addEventListener('change', toggleUserField);
+    });
+</script>
+{% endblock %}
