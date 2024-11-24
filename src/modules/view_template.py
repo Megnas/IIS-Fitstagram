@@ -8,12 +8,41 @@ from sqlalchemy import and_, not_
 from .user_manager import get_user, get_users
 from .post_manager import get_posts_based_on_filters
 
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectMultipleField, DateField, SelectField
+from wtforms import (
+    StringField, 
+    PasswordField, 
+    SubmitField, 
+    BooleanField, 
+    SelectMultipleField, 
+    DateField, 
+    SelectField,
+)
+from .groups_manager import (
+    get_user_owned_groups,
+    get_user_member_groups,
+    get_user_invited_groups,
+)
+from .invites_manager import (
+    invite_user_to_group,
+)
+
 from wtforms.validators import DataRequired, Email, Length, Regexp
 from wtforms.validators import Length, Optional
 from flask_wtf import FlaskForm
 
 bp = Blueprint('view', __name__)
+
+def user_invite_form(choices):
+    class UserInviteForm(FlaskForm):
+        invite = SubmitField()
+    
+    group = SelectField(
+        validators=[DataRequired()],
+        choices=choices
+        )
+    setattr(UserInviteForm, "group", group)
+
+    return UserInviteForm()
 
 class PostFilterForm(FlaskForm):
     tags = StringField('Tags', validators=[ 
@@ -111,7 +140,7 @@ def tag():
 
     return render_template("tag.html", posts=posts, page=page, pages=pages,form=form,tag_name=tag)
 
-@bp.route("/profile/<int:user_id>")
+@bp.route("/profile/<int:user_id>", methods=["GET", "POST"])
 def profile(user_id):
     user = get_user(user_id)
     if(user):
@@ -138,7 +167,39 @@ def profile(user_id):
         )
         
         form.order_by.data = order_by
-
-        return render_template("profile.html", p_user=user, posts=posts, page=page, pages=pages,form=form)
+        
+        
+        if (current_user.is_authenticated):
+            choices=[
+                (group.id, group.name) for
+                group in
+                get_user_owned_groups(current_user.id) if 
+                group not in get_user_member_groups(user_id) and
+                group not in get_user_invited_groups(user_id)]
+            if (len(choices) != 0):
+                invite_form = user_invite_form(
+                    choices=choices
+                )
+            else:
+                invite_form = None
+        else:
+            invite_form = None
+            
+        if (invite_form != None and invite_form.validate_on_submit()):
+            invite_user_to_group(
+                group_id=invite_form.group.data, 
+                user_id=user_id
+            )
+            invite_form = None
+            
+        return render_template(
+            "profile.html", 
+            p_user=user, 
+            posts=posts, 
+            page=page, 
+            pages=pages,
+            form=form,
+            invite_form=invite_form,
+        )
     else:
         abort(404, description="User does not exists.")

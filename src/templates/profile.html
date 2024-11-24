@@ -9,6 +9,16 @@ Login
 <h1>{{ p_user.username }}</h1>
 <p>{{ p_user.unique_id }}</p>
 <img src="{{ url_for('foto.get_user_image', user_id=p_user.id) }}" alt="user image">
+
+{% if invite_form is not none %}
+<form method="POST" enctype="multipart/form-data",
+    action="{{ url_for('view.profile', user_id=p_user.id) }}">
+    {{ invite_form.hidden_tag() }}
+    {{ invite_form.group }}
+    {{ invite_form.invite }}
+</form>
+{%endif%}
+
 <h2>User Posts</h2>
 <form method="GET" class="filter_form">
     {{ form.hidden_tag() }}

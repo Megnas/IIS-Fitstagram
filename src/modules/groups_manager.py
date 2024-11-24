@@ -17,6 +17,17 @@ def user_is_member(user_id: int, group_id: int) -> bool:
         return True
     return False
 
+def get_user_invited_groups(user_id: int) -> [Group]:
+    invites = db.session.query(GroupInvite).filter(
+        GroupInvite.user_id == user_id
+    ).all()
+    group_ids = [invite.group_id for invite in invites]
+    groups = db.session.query(Group).filter(
+        Group.id.in_(group_ids)
+    )
+    return groups
+
+
 def get_user_owned_groups(user_id: int) -> [Group]:
     groups = db.session.query(Group).filter(
         Group.owner_id == user_id
