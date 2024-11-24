@@ -10,16 +10,15 @@ import click
 
 app = Flask(__name__)
 
-#Load env from .env
-load_dotenv()
-#Get db url form env
-db_path = os.getenv('DATABASE_URL')
-print("Db: ", db_path)
-#Set db param (if env does not exist, will default to "sqlite:///project.db")
-app.config["SQLALCHEMY_DATABASE_URI"] = db_path if db_path else "sqlite:///project.db"
+def str_to_bool(value):
+    return str(value).lower() in {'true', '1', 't', 'yes', 'y'}
 
-#TODO: Load secret key from .env
-app.config['SECRET_KEY'] = 'not a secret'
+
+load_dotenv()
+
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL', "sqlite:///project.db")
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', "not very secret key")
+app.config['ALLOW_REGISTRATION'] = str_to_bool(os.getenv('ALLOW_REGISTRATION', "True"))
 
 @app.cli.command("purge-db")
 def purge_db():
@@ -34,13 +33,26 @@ def purge_db():
     db.session.commit()
     click.echo("All tables have been purged.")
 
+@app.cli.command("create-admin")
+def purge_db():
+    """Purges all data from all database tables."""
+    meta = db.metadata
+    with app.app_context():
+        for table in reversed(meta.sorted_tables):
+            db.session.execute(table.delete())
+        db.session.commit()
+    db.metadata.clear()
+    db.drop_all()
+    db.session.commit()
+    click.echo("Created admin user.")
+
 with  app.app_context():
     db.init_app(app)
     #db.drop_all()
     db.create_all()
     init_login_manager(app)
 
-from modules import auth_template, view_template, settings_template, groups_template, photo_template, post_template, search_template
+from modules import auth_template, view_template, settings_template, groups_template, photo_template, post_template, search_template, admin_template
 app.register_blueprint(auth_template.bp)
 app.register_blueprint(photo_template.bp)
 app.register_blueprint(view_template.bp)
@@ -48,6 +60,7 @@ app.register_blueprint(settings_template.bp)
 app.register_blueprint(groups_template.bp)
 app.register_blueprint(post_template.bp)
 app.register_blueprint(search_template.bp)
+app.register_blueprint(admin_template.bp)
 
 @app.context_processor
 def inject_user():

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app, abort
 from . import user_manager
 from flask_login import login_required, logout_user, login_user, current_user
 from flask_wtf import FlaskForm
@@ -32,6 +32,9 @@ class LoginForm(FlaskForm):
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
+    if not current_app.config['ALLOW_REGISTRATION']:
+        abort(405, description="Registration is not allowed!")
+
     form = RegisterForm()
 
     if form.validate_on_submit():

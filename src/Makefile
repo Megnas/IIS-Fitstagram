@@ -7,7 +7,7 @@ docker: docker-build docker-run
 
 # Run the Docker container
 docker-run:
-	docker run --name "$(DOCKER_NAME)" -d -p 5000:5000 --network=main $(DOCKER_NAME)
+	docker run --name "$(DOCKER_NAME)" -d -p 80:5000 --network=main $(DOCKER_NAME)
 
 # Build the Docker image
 docker-build:
