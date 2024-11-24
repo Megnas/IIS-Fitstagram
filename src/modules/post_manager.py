@@ -40,7 +40,7 @@ def can_see_post(user: User, post: Post) -> bool:
     if user.id == post.owner_id or user.id in post.users:
         return True
     for group in post.groups:
-        if user.id == group.owner_id or user.id in group.users:
+        if user.id == group.owner_id or user in group.users:
             return True
     return False
 
