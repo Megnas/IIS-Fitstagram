@@ -149,7 +149,6 @@ def create_user():
             flash('User creation succesful', 'danger')
             return redirect(url_for('admin.create_user'))
         except Exception as e:
-            db.session.rollback()
             flash('Registration Failed.', 'danger')
             print("Registration failed!", e)
 
