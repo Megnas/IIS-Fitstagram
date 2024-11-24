@@ -187,12 +187,10 @@ def leave_group(group_id):
         return abort(404, "Could not find group")
     
     if (group.owner_id == current_user.id):
-        print("Owner trying to leave")
         if (get_user_count(group_id=group_id) > 0):
-            print("Transferring ownership")
             transfer_ownership_to_next(group_id=group_id)
         else:
-            print("Did not transfer ownership")
+            flash("Cannot leave as the last user", "warning")
             return redirect(url_for("groups.group_homepage", group_id=group_id))
 
     remove_user_from_group(group_id=group_id, user_id=user_id)
@@ -206,10 +204,8 @@ def remove_group(group_id):
         return abort(404, "Could not find group")
     if (
         group.owner_id != current_user.id and
-        (
-            current_user.role == Roles.MODERATOR or
-            current_user.role == Roles.ADMIN
-        )
+        current_user.role != Roles.MODERATOR and
+        current_user.role != Roles.ADMIN
     ):
         return abort(401, "You don't have permission to remove group")
     
@@ -318,45 +314,32 @@ def group_homepage(group_id):
     form.order_by.data = order_by
 
     invite = None
+    owner = False
+    is_member = False
+
     if (current_user.is_authenticated):
+        is_member=user_is_member(
+            group_id=group.id,
+            user_id=current_user.id
+        )
         invite = get_invite(
                 user_id=current_user.id, 
                 group_id=group.id
-            )
-        if (current_user.id == group.owner_id or
-            current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN
-        ):
-            return render_template(
-                "group_homepage.html",
-                group=group, 
-                owner=True,
-                posts=posts,
-                page=page,
-                pages=pages,
-                form=form,
-                is_member=user_is_member(
-                    group_id=group.id,
-                    user_id=current_user.id
-                ),
-                invite=invite,
-            )
-        if ( user_is_member(user_id=current_user.id, group_id=group.id) or
-        group.visibility
-        ):
-            return render_template(
-                "group_homepage.html", 
-                group=group, 
-                owner=False, 
-                posts=posts, 
-                page=page, 
-                pages=pages,
-                form=form,
-                is_member=user_is_member(
-                    group_id=group.id,
-                    user_id=current_user.id
-                ),
-                invite=invite,
-            )
+        )
+        if (current_user.id == group.owner_id):
+            owner = True
+
+        return render_template(
+            "group_homepage.html",
+            group=group, 
+            owner=owner,
+            posts=posts,
+            page=page,
+            pages=pages,
+            form=form,
+            is_member=is_member,
+            invite=invite,
+        )
 
     if (group.visibility):
         return render_template(
