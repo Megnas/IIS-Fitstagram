@@ -7,8 +7,9 @@ Admin Page
 
 {% block content %}
 
-<h2>Not Blocked Tags</h2>
-<ul>
+<div class="general_view_page_container">
+<h2>Allowed Tags</h2>
+<ul class="admin_tag_list">
     {% for tag in not_blocked_tags %}
         <li>
             <span>#{{ tag.name }}</span>
@@ -20,7 +21,7 @@ Admin Page
 </ul>
 
 <h2>Blocked Tags</h2>
-<ul>
+<ul class="admin_tag_list">
     {% for tag in blocked_tags %}
         <li>
             <span>#{{ tag.name }}</span>
@@ -30,4 +31,5 @@ Admin Page
         </li>
     {% endfor %}
 </ul>
+</div>
 {% endblock %}

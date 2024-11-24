@@ -142,6 +142,7 @@ body {
 
 .user-header-pfp img{
     height: 2em;
+    width: 2em;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -193,6 +194,13 @@ body {
 .group_list_item:hover{
     background-color: #b9f9ff;
     transition: 0.2s;
+}
+
+.group_list_item img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .group_desc{
@@ -496,7 +504,9 @@ body {
 
 .upload_form_pfp{
     margin: auto;
-    width: 50%;
+    width: 20em;
+    height: 20em;
+    object-fit: cover;
     border: 0.1em solid #AAA;
 }
 
@@ -576,5 +586,32 @@ body {
 .filter_form select{
     border: thin solid #AAA;
     border-radius: 0;
+}
+
+.admin_tag_list li{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 20em;
+}
+
+.admin_user_list li{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    justify-content: space-between;
+    margin-bottom: 1em;
+    width: 100%;
+}
+
+.admin_selection a{
+    padding-right: 1em;
+}
+
+.admin_selection a:hover{
+    text-decoration: underline;
+}
+
+.profile_user{
+    margin:auto;
 }
 

@@ -6,12 +6,13 @@ Login
 {% endblock %}
 
 {% block content %}
-<h1>{{ p_user.username }}</h1>
-<p>{{ p_user.unique_id }}</p>
-<img src="{{ url_for('foto.get_user_image', user_id=p_user.id) }}" alt="user image">
-
+<div class="profile_user">
+    <h1>{{ p_user.username }}</h1>
+    <p>{{ p_user.unique_id }}</p>
+    <img src="{{ url_for('foto.get_user_image', user_id=p_user.id) }}" alt="user image">
+</div>
 {% if invite_form is not none %}
-<form method="POST" enctype="multipart/form-data",
+<form method="POST" enctype="multipart/form-data" class="filter_form"
     action="{{ url_for('view.profile', user_id=p_user.id) }}">
     {{ invite_form.hidden_tag() }}
     {{ invite_form.group }}

@@ -9,10 +9,10 @@ Admin Page
 
 {% if current_user_is_admin() %}
 
+<div class="general_view_page_container">
 <a href="{{ url_for('admin.create_user') }}">Create New User</a>
-
 <h2>Moderators</h2>
-<ul>
+<ul class="admin_user_list">
     {% for user in moderators %}
         <li>
             <span>{{ user.username }} ({{ user.unique_id }}) - {{ user.email }}</span>
@@ -26,7 +26,7 @@ Admin Page
 {% endif %}
 
 <h2>Not Blocked Users</h2>
-<ul>
+<ul class="admin_user_list">
     {% for user in not_blocked_users %}
         <li>
             <span>{{ user.username }} ({{ user.unique_id }}) - {{ user.email }}</span>
@@ -44,7 +44,7 @@ Admin Page
 </ul>
 
 <h2>Blocked Users</h2>
-<ul>
+<ul  class="admin_user_list">
     {% for user in blocked_users %}
         <li>
             <span>{{ user.username }} ({{ user.unique_id }}) - {{ user.email }}</span>
@@ -54,4 +54,5 @@ Admin Page
         </li>
     {% endfor %}
 </ul>
+</div>
 {% endblock %}

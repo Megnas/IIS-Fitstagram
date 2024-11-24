@@ -6,9 +6,14 @@ Invites and Requests
 {% endblock %}
 
 {% block content %}
+<div class="general_view_page_container">
 <h2>Invites</h2>
 
 <ul>
+
+    {% if not invites.all() %}
+    <li>You have no invites</li>
+    {% endif %}
 {% for invite in invites %}
     <li>
     {{invite.name}}
@@ -31,6 +36,9 @@ Invites and Requests
 <h2>Requests</h2>
 
 <ul>
+    {% if not requests.all() %}
+    <li>You have no requests pending</li>
+    {% endif %}
 {% for request in requests %}
     <li>
     {{request.name}}
@@ -43,5 +51,5 @@ Invites and Requests
     </li>
 {% endfor %}
 </ul>
-
+</div>
 {% endblock %}
