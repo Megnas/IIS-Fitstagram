@@ -117,11 +117,30 @@ def add_user_to_group(group_id: int, user_id: int):
     group = db.session.query(Group).filter(Group.id == group_id).first()
     group.users.append(user_id)
     db.session.commit()
+    
+# The user count excludes the owner
+def get_user_count(group_id: int) -> int:
+    group = get_group(group_id)
+    return len(group.users)
+    
+def transfer_ownership_to_next(group_id: int):
+    owner = get_group_owner(group_id=group_id)
+    group = get_group(group_id=group_id)
+    if (len(group.users) <= 0):
+        return
+    new_owner = group.users[0]
+    group.users.append(owner)
+    group.owner = new_owner.id
+
+    db.session.commit()
 
 def remove_user_from_group(group_id: int, user_id: int):
     group = db.session.query(Group).filter(Group.id == group_id).first()
-    group.users.remove(user_id)
-    db.session.commit()
+    user = db.session.query(User).filter(User.id == user_id).first()
+
+    if (user in group.users):
+        group.users.remove(user)
+        db.session.commit()
     
 def change_group_description(group_id: int, description: str):
     group = db.session.query(Group).filter(Group.id == group_id).first()

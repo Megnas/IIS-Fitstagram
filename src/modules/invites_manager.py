@@ -54,6 +54,29 @@ def invite_user_to_group(group_id: int, user_id: int):
     )
     db.session.add(invite)
     db.session.commit()
+
+def request_group_join(group_id: int, user_id: int):
+    group = db.session.query(Group).filter(Group.id == group_id).first()
+    user = db.session.query(User).filter(User.id == user_id).first()
+    
+    invite = db.session.query(GroupInvite).filter(
+        and_(
+            GroupInvite.user_id == user_id,
+            GroupInvite.group_id == group_id
+        )
+    ).first()
+    if (invite != None):
+        return
+
+    invite = GroupInvite(
+        user_id=user.id,
+        group_id=group.id,
+        user_pending=False,
+        group_pending=True,
+        date_created=datetime.now()
+    )
+    db.session.add(invite)
+    db.session.commit()
     
 def cancel_group_invite(user_id: int, group_id: int):
     invite = db.session.query(GroupInvite).filter(
@@ -68,15 +91,38 @@ def cancel_group_invite(user_id: int, group_id: int):
     
     db.session.delete(invite)
     db.session.commit()
-    
-def request_group_join(user_id: int, group_id: int):
-    group = db.session().query(Group).filter(Group.id == group_id).first()
 
-    if (group == None):
+def approve_group_invite(user_id: int, group_id: int):
+    invite = db.session.query(GroupInvite).filter(
+        and_(
+            GroupInvite.user_id == user_id,
+            GroupInvite.group_id == group_id
+        )
+    ).first()
+
+    if (invite == None):
         return
+    db.session.delete(invite)
     
+    user = db.session.query(User).filter(
+        User.id == user_id
+    ).first()
+    group = db.session.query(Group).filter(
+        Group.id == group_id
+    ).first()
+    
+    group.users.append(user)
 
+    db.session.commit()
     
+def get_invite(user_id: int, group_id: int) -> GroupInvite:
+    invite = db.session.query(GroupInvite).filter(
+        and_(
+            GroupInvite.user_id == user_id,
+            GroupInvite.group_id == group_id
+        )
+    ).first()
+    return invite 
 
 def get_user_group_invitations(user_id: int) -> [GroupInvite]:
     group_invitations = db.session.query(GroupInvite).filter(

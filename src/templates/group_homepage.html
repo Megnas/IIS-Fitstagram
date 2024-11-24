@@ -15,6 +15,35 @@ Group homepage
 <a href="{{ url_for('groups.group_users', group_id=group.id)}}">
     Users
 </a>
+{%if user.is_authenticated %}
+    {% if is_member %}
+        <a href="{{ 
+            url_for('groups.leave_group',
+                user_id=current_user.id,
+                group_id=group.id 
+            )}}">Leave</a>
+    {% else %}
+        {% if invite is not none %}
+            {% if invite.user_pending %}
+                <a href="{{
+                    url_for('groups.request_join',
+                    group_id=group.id,
+                    user_id=user.id
+                    )
+                }}">Cancel join request</a>
+            {% else %}
+                <a>Decline invitation</a>
+            {% endif %}
+        {% else %}
+            <a href="{{
+                url_for('groups.request_join',
+                group_id=group.id,
+                user_id=user.id
+                )
+            }}">Request join</a>
+        {% endif%}
+    {% endif %}
+{% endif %}
 
 <h2>Group Image board</h2>
 <form method="GET" class="filter_form">
