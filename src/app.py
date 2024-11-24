@@ -78,5 +78,17 @@ def utility_functions():
         current_user_is_admin=current_user_is_admin
     )
 
+@app.errorhandler(Exception)
+def universal_error_handler(e):
+    if hasattr(e, 'code'):
+        error_code = e.code
+        error_name = e.name
+    else:
+        error_code = 500
+        error_name = "Internal Server Error"
+
+    return render_template('error.html', error_name=error_name, error_message=str(e)), error_code
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
