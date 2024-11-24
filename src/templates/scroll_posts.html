@@ -22,7 +22,9 @@
             </a>
             <p>
             {% for tag in post.tags %}
+                {% if not tag.blocked %}
                 <a href="{{ url_for('view.tag', tag=tag.name) }}">#{{ tag.name }}</a>
+                {% endif %}
             {% endfor %}
             </p>
         </div>
