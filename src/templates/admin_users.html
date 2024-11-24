@@ -1,0 +1,30 @@
+<!-- templates/admin.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Admin Page
+{% endblock %}
+
+{% block content %}
+<h2>Not Blocked Users</h2>
+<ul>
+    {% for user in not_blocked_users %}
+        <li>
+            {{ user.username }} - <form action="{{ url_for('admin.admin_block', user_id=user.id) }}" method="POST">
+                <button type="submit">Block</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+<h2>Blocked Users</h2>
+<ul>
+    {% for user in blocked_users %}
+        <li>
+            {{ user.username }} - <form action="{{ url_for('admin.admin_block', user_id=user.id) }}" method="POST">
+                <button type="submit">Unblock</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

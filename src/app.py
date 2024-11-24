@@ -2,11 +2,12 @@ from flask import Flask, render_template, request
 from flask_login import current_user
 from dotenv import load_dotenv
 import os
-from modules.db import db, Roles
+from modules.db import db, Roles, User
 from modules.auth import init_login_manager
 import modules.photo_manager as pm
 import modules.user_manager as um
 import click
+from flask.cli import with_appcontext
 
 app = Flask(__name__)
 
@@ -33,18 +34,17 @@ def purge_db():
     db.session.commit()
     click.echo("All tables have been purged.")
 
-@app.cli.command("create-admin")
-def purge_db():
-    """Purges all data from all database tables."""
-    meta = db.metadata
-    with app.app_context():
-        for table in reversed(meta.sorted_tables):
-            db.session.execute(table.delete())
-        db.session.commit()
-    db.metadata.clear()
-    db.drop_all()
+@app.cli.command('create_admin')
+@click.argument('email')
+@click.argument('password')
+@click.argument('username')
+@click.argument('uid')
+@with_appcontext
+def create_admin(email,password, username, uid):
+    user = um.create_user(username=username, pwd=password, mail=email, uid=uid, role=Roles.ADMIN)
+    db.session.add(user)
     db.session.commit()
-    click.echo("Created admin user.")
+    click.echo(f"User {username} created successfully!")
 
 with  app.app_context():
     db.init_app(app)

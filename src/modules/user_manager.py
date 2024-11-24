@@ -18,9 +18,9 @@ def get_similar_users(patern: str) -> [User]:
 
     return results
 
-def create_user(username: str, pwd: str, mail: str, uid: str) -> User:
+def create_user(username: str, pwd: str, mail: str, uid: str, role: Roles = Roles.USER) -> User:
     hashed_pwd = sha224(pwd.encode('utf-8')).hexdigest()
-    new_user = User(username=username, email=mail, password_hash=hashed_pwd, role=Roles.USER, blocked=False, photo_id=None, unique_id=uid)
+    new_user = User(username=username, email=mail, password_hash=hashed_pwd, role=role, blocked=False, photo_id=None, unique_id=uid)
     db.session.add(new_user)
     db.session.commit()
     return new_user

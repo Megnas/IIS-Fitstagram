@@ -12,6 +12,6 @@ def init_login_manager(app: Flask):
     @login_manager.user_loader
     def load_user(user_id):
         try:
-            return User.query.filter_by(id=user_id).first()
+            return User.query.filter_by(id=user_id, blocked = False).first()
         except:
             return None
