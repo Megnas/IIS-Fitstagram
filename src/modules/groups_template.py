@@ -23,8 +23,13 @@ from .invites_manager import (
 )
 from .user_manager import get_users_for_invite, get_user_from_uid
 from . import groups_manager
-from .post_manager import get_accessible_posts_group
+from .post_manager import get_posts_based_on_filters
 from wtforms import widgets
+
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectMultipleField, DateField, SelectField
+from wtforms.validators import DataRequired, Email, Length, Regexp
+from wtforms.validators import Length, Optional
+from flask_wtf import FlaskForm
 
 bp = Blueprint("groups", __name__)
 
@@ -183,6 +188,20 @@ def groups():
         owned_groups = None
     return render_template("groups.html", groups=groups, owned_groups = owned_groups)
 
+class PostFilterForm(FlaskForm):
+    tags = StringField('Tags', validators=[ 
+        Length(min=0, max=512), 
+        Regexp(r'^[a-z0-9_ -]*$', message="Tags must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.")
+    ])
+    users = StringField('Users', validators=[ 
+        Length(min=0, max=512), 
+        Regexp(r'^[a-z0-9_ ]*$', message="Tags must not contain spaces or uppercase letters and can only include lowercase letters, numbers, and underscores.")
+    ])
+    start_date = DateField('Start Date', format='%Y-%m-%d', validators=[Optional()])
+    end_date = DateField('End Date', format='%Y-%m-%d', validators=[Optional()])
+    order_by = SelectField('Order By', choices=[('time', 'Time'), ('score', 'Score'), ('comments', 'Number of Comments')], default='time')  # Dropdown for ordering
+    submit = SubmitField('Apply Filters')
+
 @bp.route("/group_homepage/<int:group_id>", methods=['GET'])
 def group_homepage(group_id):
     group = get_group(group_id=group_id)       
@@ -191,12 +210,28 @@ def group_homepage(group_id):
         return abort(404, "Could not find group")
 
     page = request.args.get('page', 1, type=int)
-    posts, tototal, pages = get_accessible_posts_group(
-        current_user,
+
+    form = PostFilterForm()
+
+    tags = request.args.get('tags', None ,type=str)
+    users = request.args.get('users', None ,type=str)
+    start_date = request.args.get('start_date', None)
+    end_date = request.args.get('end_date', None)
+    order_by = request.args.get('order_by', 'time')
+
+    posts, tototal, pages = get_posts_based_on_filters(
+        current_user, 
         page=page, 
-        per_page=(4 * 6), 
-        group_id=group.id
+        per_page=24, 
+        order_by=order_by, 
+        start_date=start_date, 
+        end_date=end_date, 
+        filter_tag_string=tags, 
+        filter_user_string=users,
+        specific_group=group.id
     )
+    
+    form.order_by.data = order_by
 
     if (current_user.is_authenticated):
         if (current_user.id == group.owner_id or
@@ -208,7 +243,7 @@ def group_homepage(group_id):
                 posts=posts,
                 page=page,
                 pages=pages,
-                self_ref="groups.group_homepage"
+                form=form
             )
         if ( user_is_member(user_id=current_user.id, group_id=group.id)):
             return render_template(
@@ -218,7 +253,7 @@ def group_homepage(group_id):
                 posts=posts, 
                 page=page, 
                 pages=pages,
-                self_ref="groups.group_homepage"
+                form=form
             )
 
     if (group.visibility):
@@ -229,7 +264,7 @@ def group_homepage(group_id):
             posts=posts, 
             page=page, 
             pages=pages,
-            self_ref="groups.group_homepage"
+            form=form
         )
 
     return abort(401, "User does not have acces to this group")

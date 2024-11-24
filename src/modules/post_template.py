@@ -13,7 +13,7 @@ from .post_manager import delete_comment as delete_comment_from_db
 from wtforms import widgets
 
 
-from .db import Post, Comment
+from .db import Post, Comment, Roles
 
 bp = Blueprint('post', __name__)
 
@@ -163,10 +163,24 @@ def delete_comment(commet_id, post_id):
     if not comment:
         abort(404, description="Comment does not exists.")
 
-    if not comment.user_id == current_user.id:
+    if not (comment.user_id == current_user.id or current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN):
         abort(401, description="You dont have permissions")
 
     delete_comment_from_db(comment)
+
+    return redirect(url_for('post.post', post_id=post_id))
+
+@bp.route('/delete_post/<int:post_id>', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post: Post = get_post_by_id(post_id)
+    if not post:
+        abort(404, description="Post does not exists.")
+
+    if not (post.owner_id == current_user.id or current_user.role == Roles.MODERATOR or current_user.role == Roles.ADMIN):
+        abort(401, description="You dont have permissions")
+
+    #TODO: Delete post
 
     return redirect(url_for('post.post', post_id=post_id))
 

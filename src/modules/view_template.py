@@ -6,7 +6,7 @@ from sqlalchemy import and_, not_
 
 
 from .user_manager import get_user, get_users
-from .post_manager import get_accessible_posts, get_accessible_posts_tag, get_accessible_posts_user, get_posts_based_on_filters
+from .post_manager import get_posts_based_on_filters
 
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectMultipleField, DateField, SelectField
 from wtforms.validators import DataRequired, Email, Length, Regexp
@@ -53,7 +53,7 @@ class PostFilterUserForm(FlaskForm):
 def index():
     page = request.args.get('page', 1, type=int)
 
-    posts, tototal, pages = get_accessible_posts(current_user, page=page, per_page=(4 * 6))
+    posts, tototal, pages = get_posts_based_on_filters(current_user, page=page, per_page=(4 * 6))
     return render_template("index.html", posts=posts, page=page, pages=pages, self_ref='view.index')
 
 @bp.route("/galery")
