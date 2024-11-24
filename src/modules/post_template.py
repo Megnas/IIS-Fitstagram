@@ -15,7 +15,7 @@ from .post_manager import edit_post as edit_post_in_db
 from wtforms import widgets
 from wtforms.validators import ValidationError
 
-from .db import Post, Comment, Roles, db
+from .db import Post, Comment, Roles
 
 bp = Blueprint('post', __name__)
 
@@ -105,7 +105,6 @@ def create_post():
             create_new_post(user_id=current_user.id, post_image=form.post_photo.data, post_decs=form.description.data or "", post_tags=tag_ids, groups=group_ids, visibility=form.visibility.data, allow_users=user_ids)
             return redirect(url_for('view.index'))
         except:
-            db.session.rollback()
             flash(f'Failed to create Post', 'danger')
             return render_template('create_post.html', form=form)
         
@@ -263,7 +262,6 @@ def edit_post(post_id):
             edit_post_in_db(post=post, description=form.description.data, tags=new_tags, groups=form.groups.data, visibiliy=form.visibility.data, users=new_users)
             flash(f'Post updated', 'info')
         except:
-            db.session.rollback()
             flash(f'Post updated failed', 'warn')
         return render_template("edit_post.html", form=form, post=post)
 
