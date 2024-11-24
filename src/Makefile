@@ -1,6 +1,6 @@
 DOCKER_NAME=iis-fitstagram
 
-.PHONY: docker docker-run docker-build clean
+.PHONY: docker docker-run docker-build clean zip
 
 # Main target
 docker: docker-build docker-run
@@ -17,3 +17,6 @@ docker-build:
 clean:
 	docker stop "$(DOCKER_NAME)" || true
 	docker rm "$(DOCKER_NAME)" || true
+
+zip:
+	zip xvacla37.zip *.py modules/*.py templates/*.html requirements.txt doc.html
