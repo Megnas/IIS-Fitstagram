@@ -1,8 +1,22 @@
 import string
 from .db import db, User, Roles, Group, GroupInvite
 from hashlib import sha224
+from sqlalchemy import or_
 
 from .photo_manager import upload_image_to_webg_resized
+
+def get_similar_users(patern: str) -> [User]:
+    like_pattern = f"%{patern}%"
+
+    results = User.query.filter(
+        or_(
+            User.username.ilike(like_pattern),
+            User.unique_id.ilike(like_pattern),
+            User.email.ilike(like_pattern)
+        )
+    ).all()
+
+    return results
 
 def create_user(username: str, pwd: str, mail: str, uid: str) -> User:
     hashed_pwd = sha224(pwd.encode('utf-8')).hexdigest()
