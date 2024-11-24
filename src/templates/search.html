@@ -6,5 +6,32 @@ Search
 {% endblock %}
 
 {% block content %}
+<h2>Results for: {{ seach_term }}</h2>
+
+<div>
+<h4>Users</h4>
+{% if users %}
+<ul>
+    {% for s_user in users %}
+        <li><a href="{{ url_for('view.profile', user_id=s_user.id) }}"> {{ s_user.username }} ({{ s_user.unique_id }}) </a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Nobody was found</p>
+{% endif %}
+</div>
+
+<div>
+    <h4>Tags</h4>
+    {% if tags %}
+    <ul>
+        {% for s_tag in tags %}
+            <li><a href="{{ url_for('view.tag', tag=s_tag.name) }}">#{{ s_tag.name }}</a></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Nothing was found</p>
+    {% endif %}
+</div>
 
 {% endblock %}
