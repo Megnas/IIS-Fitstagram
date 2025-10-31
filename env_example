@@ -1,0 +1,4 @@
+POSTGRES_USER=fitstagram
+POSTGRES_PASSWORD=fitstagrampass
+POSTGRES_DB=fitstagram_db
+DATABASE_URL=postgresql+psycopg2://fitstagram:fitstagrampass@db:5432/fitstagram_db
