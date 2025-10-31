@@ -31,5 +31,5 @@
 
 ### Run App
 ```
-    python app.py
+    python main.py
 ```
