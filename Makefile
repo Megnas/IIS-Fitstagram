@@ -4,7 +4,7 @@ run: .env
 	docker-compose up -d
 
 rebuild: .env
-	docker-compose up -d rebuild web
+	docker-compose up -d --build web
 
 .env: env_example
 	[ ! -f .env ] && cp env_example .env
